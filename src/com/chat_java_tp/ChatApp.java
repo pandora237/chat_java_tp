@@ -7,11 +7,13 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
 import java.io.*;
 import java.net.*;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class ChatApp extends Application {
 	private static final String SERVER_IP = "127.0.0.1"; // adresse IP du serveur
 	private static final int PORT = 8081;
+	public static final String FILE_DOWNLOAD = "downloads/";
 
 	private User currentUser;
 
@@ -52,8 +55,11 @@ public class ChatApp extends Application {
 		Button sendButton = new Button("Envoyer");
 		sendButton.setOnAction(e -> sendMessage());
 
+		Button fileButton = new Button("Envoyer un fichier");
+		fileButton.setOnAction(e -> sendFile());
+
 		// Mise en page
-		VBox layout = new VBox(10, messageArea, inputField, sendButton);
+		VBox layout = new VBox(10, messageArea, inputField, sendButton, fileButton);
 		layout.setPadding(new Insets(10));
 
 		Scene scene = new Scene(layout, 400, 300);
@@ -79,11 +85,28 @@ public class ChatApp extends Application {
 						JSONObject jsonObject = new JSONObject(response);
 						if ("get_messages".equals(jsonObject.get("action"))) {
 
-						} 
-						
-						JSONObject mess =   jsonObject.getJSONObject("datas");
-						System.out.println("Réception : " + mess.getString("content") + " :::::::: " + response);
-			            messageArea.appendText("Serveur: " + mess.getString("content") + "\n"); 
+						}
+
+						if ("send_file".equals(jsonObject.get("action"))) {
+							JSONObject fileData = jsonObject.getJSONObject("datas");
+							String fileName = fileData.getString("fileName");
+							byte[] fileContent = Base64.getDecoder().decode(fileData.getString("fileContent"));
+
+							File downloadedFile = new File(FILE_DOWNLOAD + fileName);
+							downloadedFile.getParentFile().mkdirs();// Créer le dossier si nécessaire
+
+							try (FileOutputStream fos = new FileOutputStream(downloadedFile)) {
+								fos.write(fileContent);
+								messageArea.appendText("Fichier reçu : " + fileName + " (enregistré dans downloads)\n");
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							JSONObject mess = jsonObject.getJSONObject("datas");
+							System.out.println("Réception : " + mess.getString("content") + " :::::::: " + response);
+							messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
+						}
+
 					}
 				} catch (IOException e) {
 					if (running)
@@ -169,6 +192,27 @@ public class ChatApp extends Application {
 		unifiedResponse.put("messages", messages);
 
 		return unifiedResponse;
+	}
+
+	private void sendFile() {
+		FileChooser fileChooser = new FileChooser();
+		File file = fileChooser.showOpenDialog(null);
+
+		if (file != null && file.exists()) {
+			try (FileInputStream fis = new FileInputStream(file)) {
+				byte[] fileBytes = fis.readAllBytes();
+				JSONObject fileMessage = new JSONObject();
+				fileMessage.put("action", "send_file");
+				fileMessage.put("fileName", file.getName());
+				fileMessage.put("fileSize", fileBytes.length);
+				fileMessage.put("fileContent", Base64.getEncoder().encodeToString(fileBytes));
+
+				out.println(fileMessage.toString()); // Envoi du fichier au serveur
+				messageArea.appendText("Fichier envoyé : " + file.getName() + "\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	// Arrêt propre de l'application
