@@ -2,8 +2,15 @@ package com.chat_java_tp;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.opencv.core.Core;
+import org.opencv.videoio.VideoCapture;
+
+import com.chat_java_tp.audio.AudioCallWindow;
+import com.chat_java_tp_client.sound.Sound;
+import com.chat_java_tp_client.video.VideoCallWindow;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -22,6 +29,7 @@ public class ChatApp extends Application {
 	private static final String SERVER_IP = "127.0.0.1"; // adresse IP du serveur
 	private static final int PORT = 8081;
 	public static final String FILE_DOWNLOAD = "downloads/";
+	private Sound soundApp;
 
 	private User currentUser;
 
@@ -29,6 +37,9 @@ public class ChatApp extends Application {
 	private TextField inputField; // Champ pour saisir les messages
 	private PrintWriter out; // Pour envoyer les messages au serveur
 	private volatile boolean running = true; // Flag pour indiquer si le client est actif
+	private boolean isCall = false;
+	private Button callBtnAudio;
+	private Button callBtnVideo;
 
 	public static void main(String[] args) {
 		Application.launch(args);
@@ -58,9 +69,17 @@ public class ChatApp extends Application {
 		Button fileButton = new Button("Envoyer un fichier");
 		fileButton.setOnAction(e -> sendFile());
 
+		callBtnAudio = new Button("Lancer un Appel Audio");
+		callBtnAudio.setOnAction(e -> signalAudioCall());
+
+		callBtnVideo = new Button("Lancer un Appel Video");
+		callBtnVideo.setOnAction(e -> signalVideoCall());
+
 		// Mise en page
-		VBox layout = new VBox(10, messageArea, inputField, sendButton, fileButton);
+		VBox layout = new VBox(10, messageArea, inputField, sendButton, fileButton, callBtnAudio, callBtnVideo);
 		layout.setPadding(new Insets(10));
+		ScrollPane scrollPane = new ScrollPane(layout);
+		scrollPane.setFitToHeight(true);
 
 		Scene scene = new Scene(layout, 400, 300);
 		win.setScene(scene);
@@ -68,6 +87,31 @@ public class ChatApp extends Application {
 
 		// Connexion au serveur
 		new Thread(this::connectToServer).start();
+
+		soundApp = new Sound();
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//		test();
+
+	}
+
+	public Button getCallBtnVideo() {
+		return callBtnVideo;
+	}
+
+	public Button getCallBtnAudio() {
+		return callBtnAudio;
+	}
+
+	public void handleEndCall() {
+		isCall = false;
+		callBtnVideo.setDisable(false);
+		callBtnAudio.setDisable(false);
+	}
+
+	public void initBtnCallDisabled() {
+		isCall = true;
+		callBtnVideo.setDisable(true);
+		callBtnAudio.setDisable(true);
 	}
 
 	// Connexion au serveur et gestion des messages
@@ -83,11 +127,14 @@ public class ChatApp extends Application {
 					String response;
 					while (running && (response = in.readLine()) != null) {
 						JSONObject jsonObject = new JSONObject(response);
-						if ("get_messages".equals(jsonObject.get("action"))) {
+
+						String action = jsonObject.getString("action");
+						if ("get_messages".equals(action)) {
 
 						}
 
-						if ("send_file".equals(jsonObject.get("action"))) {
+						if ("send_file".equals(action)) {
+							soundApp.playSound(Sound.NOTIFICATION, false);
 							JSONObject fileData = jsonObject.getJSONObject("datas");
 							String fileName = fileData.getString("fileName");
 							byte[] fileContent = Base64.getDecoder().decode(fileData.getString("fileContent"));
@@ -101,12 +148,36 @@ public class ChatApp extends Application {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+						} else if ("audio_call".equals(jsonObject.get("action"))) {
+							if (isCall) {
+								return;
+							}
+							JSONObject mess = jsonObject.getJSONObject("datas");
+							messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
+							Platform.runLater(() -> {
+								AudioCallWindow audioCallWindow = new AudioCallWindow(this);
+								audioCallWindow.startCallWindow(false);
+								initBtnCallDisabled();
+							});
+
+						} else if ("video_call".equals(jsonObject.get("action"))) {
+							if (isCall) {
+								return;
+							}
+							JSONObject mess = jsonObject.getJSONObject("datas");
+							messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
+							System.out.println("test::::::" + mess);
+//							Platform.runLater(() -> {
+//								VideoCallWindow videoCallWindow = new VideoCallWindow(this);
+//								videoCallWindow.startCallWindow(false);
+//								initBtnCallDisabled();
+//							});
 						} else {
+							soundApp.playSound(Sound.NOTIFICATION, false);
 							JSONObject mess = jsonObject.getJSONObject("datas");
 							System.out.println("Réception : " + mess.getString("content") + " :::::::: " + response);
 							messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
 						}
-
 					}
 				} catch (IOException e) {
 					if (running)
@@ -212,6 +283,36 @@ public class ChatApp extends Application {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private void signalAudioCall() {
+		if (out != null) {
+			JSONObject signal = new JSONObject();
+			signal.put("action", "audio_call");
+			signal.put("content", "Repond a mon appel");
+			out.println(signal.toString());
+			Platform.runLater(() -> {
+				AudioCallWindow audioCallWindow = new AudioCallWindow(this);
+				audioCallWindow.startCallWindow(true);
+				initBtnCallDisabled();
+			});
+		}
+	}
+
+	private void signalVideoCall() {
+		if (out != null) {
+			JSONObject signal = new JSONObject();
+			signal.put("action", "video_call");
+			signal.put("content", "Repond à mon appel vidéo");
+			out.println(signal.toString());
+
+			// Affichage de la fenêtre vidéo
+			Platform.runLater(() -> {
+				VideoCallWindow videoCallWindow = new VideoCallWindow(this);
+				videoCallWindow.startCallWindow(true);
+				initBtnCallDisabled();
+			});
 		}
 	}
 
