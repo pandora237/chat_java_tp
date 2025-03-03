@@ -1,0 +1,134 @@
+/*commun*/
+.btnImg {
+	-fx-background-color: #4A90E2;
+	-fx-padding: 0;
+	-fx-background-radius: 50%;
+	-fx-border-radius: 50%;
+	-fx-background-image: url('../../img/sendIco2.png');
+	-fx-background-size: 70%;
+	-fx-background-position: center;
+	-fx-background-repeat: no-repeat;
+	-fx-border-width: 1px;
+	-fx-border-color: #1A63D6;
+	-fx-min-width: 50px;
+	-fx-min-height: 50px;
+	-fx-max-width: 50px;
+	-fx-max-height: 50px;
+	-fx-cursor: hand;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0.0, 2, 2);
+}
+
+.btnImg:hover {
+	-fx-opacity: 0.8;
+	-fx-scale-x: 1.1;
+	-fx-scale-y: 1.1;
+}
+
+
+
+.VBoxRight {
+	-fx-background-color: #459bbe;
+	-fx-padding: 5;
+	-fx-background-radius: 10;
+}
+
+.nameLabel {
+	-fx-text-fill: white;
+	-fx-font-size: 12;
+	-fx-font-weight: bold;
+	-fx-padding: 2 0 2 0;
+}
+
+.contentLabel {
+	-fx-background-color: #93C5FD;
+	-fx-text-fill: black;
+	-fx-padding: 15;
+	-fx-background-radius: 10;
+	-fx-font-size: 14;
+	-fx-min-width: 200;
+	-fx-max-width: 400;
+	-fx-alignment: center;
+}
+
+.timeHLabel .label {
+	-fx-font-size: 8;
+	-fx-font-style: italic;
+	-fx-margin-left: 10;
+	-fx-alignment: CENTER_RIGHT;
+	-fx-padding: 5 0 5 0;
+}
+
+.timeHLabel {
+	-fx-alignment: CENTER_RIGHT;
+}
+
+/*right*/
+.rightMe .VBoxRight {
+	-fx-background-color: #F97316;
+	-fx-alignment: "TOP_RIGHT";
+}
+
+.rightMe .HBoxRight {
+	-fx-alignment: "TOP_RIGHT";
+}
+
+.rightMe .VBoxRight .nameLabel {
+	-fx-text-fill: white;
+}
+
+.rightMe .VBoxRight .contentLabel {
+	-fx-background-color: #FDBA74;
+}
+
+.rightMe .VBoxRight .timeHLabel .label {
+	-fx-alignment: CENTER_LEFT;
+}
+
+
+.rightMe .VBoxRight .timeHLabel {
+	-fx-alignment: CENTER_LEFT;
+}
+
+
+/*user*/
+.userblok {
+	-fx-background-color: #FDBA74;
+	-fx-padding: 10;
+	-fx-background-radius: 10;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0.0, 2, 2);
+}
+
+.userblok .button {
+	-fx-background-image: url('../../img/profileH.png');
+}
+
+.userFBlock .userblok {
+	-fx-background-color: #7cdae9;
+}
+
+.userFBlock .button {
+	-fx-background-image: url('../../img/profileF.png');
+}
+
+
+
+.flag {
+	-fx-background-color: #ff0000;
+	-fx-background-radius: 50%;
+	-fx-min-width: 10px;
+	-fx-min-height: 10px;
+	-fx-max-width: 10px;
+	-fx-max-height: 10px;
+}
+
+.statusOnline .flag {
+	-fx-background-color: #00ff4c;
+}
+
+/* .statusOnline .labelStatus {
+	-fx-text-color: #00ff4c;
+} */
+
+.statusOffline .flag {
+	-fx-background-color: #ff0000;
+}

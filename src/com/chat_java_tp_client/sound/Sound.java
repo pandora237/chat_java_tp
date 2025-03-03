@@ -1,8 +1,14 @@
 package com.chat_java_tp_client.sound;
 
 import javax.sound.sampled.*;
+
+import com.chat_java_tp_client.helpers.Helpers;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Locale;
 
 public class Sound {
 
@@ -13,12 +19,15 @@ public class Sound {
 	public static final String CALL_VIDEO = "callVideo";
 
 	// Chemins des fichiers audio MP3 non supporté par AudioSystem
-	private final String notificationSound = "sound/notification.wav";
-	private final String callAudioSound = "sound/notification.wav"; 
-	private final String callVideoSound = "sound/notification.wav";
+	private final URL notificationSound = getClass().getResource(Helpers.getResourcesPath() + "sound/message.wav");
+	private final URL callAudioSound = getClass().getResource(Helpers.getResourcesPath() + "sound/audioCall.wav");
+	private final URL callVideoSound = getClass().getResource(Helpers.getResourcesPath() + "sound/videoCall.wav");
+//	private final String callAudioSound = Helpers.getResourcesPath() + "sound/audioCall.wav";
+//	private final String callVideoSound = Helpers.getResourcesPath() + "sound/videoCall.wav";
 
 	// Constructeur par défaut
 	public Sound() {
+		System.out.println(getClass().getResource(Helpers.getResourcesPath() + "sound/message.wav"));
 	}
 
 	/**
@@ -30,7 +39,7 @@ public class Sound {
 	 *             (false).
 	 */
 	public void playSound(String type, boolean loop) {
-		String filePath;
+		URL filePath;
 		switch (type) {
 		case NOTIFICATION:
 			filePath = notificationSound;
@@ -46,26 +55,20 @@ public class Sound {
 			return;
 		}
 
-		try {
-			stopSound(); // Arrête tout son en cours de lecture
+		 stopSound(); // Arrête tout son en cours de lecture
 
-			File soundFile = new File(filePath);
-			if (!soundFile.exists()) {
-				System.err.println("Fichier audio introuvable : " + filePath);
-				return;
-			}
+		// Utiliser InputStream pour lire les fichiers audio dans les ressources
+		try (InputStream audioInputStream = filePath.openStream()) {
+		    clip = AudioSystem.getClip();
+		    clip.open(AudioSystem.getAudioInputStream(audioInputStream));
 
-			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
-			clip = AudioSystem.getClip();
-			clip.open(audioInputStream);
-
-			if (loop) {
-				clip.loop(Clip.LOOP_CONTINUOUSLY); // Lecture en boucle
-			} else {
-				clip.start(); // Lecture sans boucle
-			}
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-			System.err.println("Erreur lors de la lecture du son : " + e.getMessage());
+		    if (loop) {
+		        clip.loop(Clip.LOOP_CONTINUOUSLY); // Lecture en boucle
+		    } else {
+		        clip.start(); // Lecture sans boucle
+		    }
+		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+		    System.err.println("Erreur lors de la lecture du son : " + e.getMessage());
 		}
 	}
 

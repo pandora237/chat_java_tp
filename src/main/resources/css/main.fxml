@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml" 
+           xmlns="http://javafx.com/javafx"
+           fx:controller="com.chat_java_tp_client.controllers.MainController">
+    <children>
+        <!-- Les vues seront ajoutées ici dynamiquement -->
+    </children>
+</StackPane>

@@ -1,0 +1,166 @@
+
+
+#contain {
+    -fx-background-color: #459bbe;  
+    -fx-background-image: url('../img/loginImg6.jpg');  
+    -fx-background-repeat: no-repeat; 
+    -fx-background-position: center;  
+    -fx-background-size: cover;  
+    -fx-padding: 5;  
+}
+
+#containForm {
+    -fx-background-color: rgba(236, 236, 236, 0.9);  
+    -fx-background-radius: 10; /* Coins arrondis */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0.2, 0, 2);  
+}
+ 
+
+#submitBtn{
+    -fx-background-color: #4A90E2; 
+    -fx-background-radius: 5;
+     -fx-border-width: 0px;  
+}
+
+.label{
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
+
+.title{
+    -fx-font-weight: bold;
+    -fx-font-size: 17;
+}
+#welcom{
+    -fx-font-weight: bold;
+    -fx-font-size: 40; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#buttonSend{
+    -fx-background-color: #4A90E2; -fx-background-radius: 50%; -fx-border-width: 0px; -fx-padding: 10;
+}
+
+#fileBtn{
+    -fx-background-color: #F6AD55; -fx-background-radius: 50%; -fx-border-width: 0px; -fx-padding: 10;
+}
+
+
+
+
+/* Styles communs */
+.baseBackgroundColor {
+    -fx-background-color: #F5F5F5;
+}
+
+.baseTextColor {
+    -fx-text-fill: white;
+}
+
+.baseFontSizeSmall {
+    -fx-font-size: 10;
+}
+
+.baseFontSizeMedium {
+    -fx-font-size: 14;
+}
+
+.baseFontSizeTiny {
+    -fx-font-size: 8;
+}
+
+.basePadding {
+    -fx-padding: 5;
+}
+
+.baseRadius {
+    -fx-background-radius: 10;
+}
+
+.baseTextColorGray {
+    -fx-text-fill: #E5E7EB;
+}
+
+.baseFontWeightBold {
+    -fx-font-weight: bold;
+}
+
+.baseFontStyleItalic {
+    -fx-font-style: italic;
+}
+
+.baseAlignmentTopLeft {
+    -fx-alignment: top_left;
+}
+
+.baseAlignmentTopRight {
+    -fx-alignment: top_right;
+}
+
+.basePaddingLarge {
+    -fx-padding: 15;
+}
+
+.baseRadiusLarge {
+    -fx-background-radius: 20;
+}
+
+.baseBackgroundBlue {
+    -fx-background-color: #93C5FD;
+}
+
+.baseBackgroundOrange {
+    -fx-background-color: #FDBA74;
+}
+
+.baseBackgroundRed {
+    -fx-background-color: #F97316;
+}
+
+.baseBackgroundGreen {
+    -fx-background-color: #6EE7B7;
+}
+
+/* Styling des boutons */
+.baseButtonStyle {
+    -fx-background-radius: 50%;
+    -fx-border-width: 0px;
+    -fx-padding: 10;
+}
+
+/* Button send specific */
+.buttonSend {
+    -fx-background-color: #4A90E2;
+}
+
+/* Button file specific */
+.buttonFile {
+    -fx-background-color: #F6AD55;
+}
+
+/* Conteneur vidéo */
+.mediaViewStyle {
+    -fx-background-color: #D1D5DB;
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+}
+
+/* User profile */
+.userProfile {
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+}

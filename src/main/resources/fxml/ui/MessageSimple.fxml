@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx" spacing="5" stylesheets="@../../css/ui/main-ui.css">
+    <HBox styleClass="HBoxRight"> 
+        <VBox styleClass="VBoxRight" fx:id="messageBlock">
+            <Label styleClass="nameLabel" fx:id="senderLabel" text="John Doe" /> 
+            <Label styleClass="contentLabel" fx:id="contentLabel"  text="Message simple ici." /> 
+            <HBox styleClass="timeHLabel" > 
+            	<Label  fx:id="timeLabel" text="12:05" />
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox>

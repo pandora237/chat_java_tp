@@ -1,0 +1,19 @@
+ .btnDefault {
+     -fx-outline: transparent;
+     -fx-font-size: 14px;
+     -fx-font-weight: 400;
+     -fx-border: 1px solid #28b90b;
+     -fx-border-radius: 2px;
+     -fx-cursor: pointer;
+     -fx-padding: 0px 16px;
+     -fx-text-align: center;
+     -fx-min-width: 100px;
+     -fx-height: 32px;
+     -fx-background-color: #28b90b;
+     color: #ffffff;
+ }
+
+ .btnDefault-red {
+     -fx-border: 1px solid #d33c3c;
+     -fx-background-color: #d33c3c;
+ }

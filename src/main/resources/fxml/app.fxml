@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="620.0" maxWidth="1040.0" prefHeight="620.0" prefWidth="1040.0" stylesheets="@../css/app.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.ChatController">
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <children> 
+                <ListView id="contentMessageListView" fx:id="contentMessageListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <!-- Bloc 1 : Message simple reçu -->
+                    <VBox spacing="5">
+                        <HBox>
+                            <VBox id="headerApp">
+                                <Label style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: bold;" text="John Doe" />
+                                <Label style="-fx-background-color: #93C5FD; -fx-text-fill: black; -fx-padding: 15; -fx-background-radius: 10; -fx-font-size: 14; -fx-min-width: 400; -fx-text-alignment: center; -fx-alignment: center;" text="Salut, comment ça va ?" />
+                                <HBox style="-fx-text-fill: #E5E7EB;                -fx-font-size: 8;                -fx-font-style: italic;                  -fx-alignment: CENTER_RIGHT;">
+                                    <Label text="12:05" />
+                                </HBox>
+
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Bloc 4 : Envoi de photo -->
+                    <VBox alignment="TOP_RIGHT" spacing="5">
+                        <HBox alignment="TOP_RIGHT">
+                            <VBox alignment="TOP_RIGHT" style="-fx-background-color: #F97316; -fx-padding: 5; -fx-background-radius: 10;">
+                                <Label style="-fx-text-fill: white; -fx-font-size: 10; -fx-font-weight: bold;" text="Moi" />
+                                <ImageView fitHeight="150" fitWidth="200" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../images/sample-photo.jpg" />
+                                    </image>
+                                </ImageView>
+                                <Label style="-fx-text-fill: #E5E7EB; -fx-font-size: 8; -fx-font-style: italic; -fx-margin-left: 10;" text="13:22" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Bloc 5 : Réception de vidéo -->
+                    <VBox spacing="5" />
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+
+
+                </ListView>
+
+                <!-- Zone d'entrée de texte et boutons -->
+                <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="300.0" prefHeight="70.0" spacing="10" style="-fx-background-color: #F0F4F8; -fx-padding: 10; -fx-background-radius: 15;" VBox.vgrow="NEVER">
+                    <children>
+                  <TextArea fx:id="inputField" minWidth="680.0" onKeyReleased="#actionKeyReleased" prefHeight="50.0" />
+
+                        <!-- Bouton d'envoi avec icône PNG et fond bleu -->
+                        <Button fx:id="sendButton" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#sendMessage" prefHeight="43.0" prefWidth="43.0" scaleShape="false" style="-fx-background-color: #4A90E2; -fx-background-radius: 50%; -fx-border-width: 0px; -fx-padding: 10;" styleClass="btnImg" textAlignment="CENTER" HBox.hgrow="NEVER" />
+
+                        <!-- Bouton de fichier avec icône PNG et fond différent -->
+                        <Button id="fileBtn" fx:id="fileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sendFile" prefHeight="43.0" prefWidth="43.0" styleClass="btnImg" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <left>
+        <VBox maxHeight="1.7976931348623157E308" style="-fx-background-color: e1e1e1;" BorderPane.alignment="CENTER">
+            <children>
+                <HBox fx:id="onlineUsersHbox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="217.0">
+                    <children>
+                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="224.0" text="Users" textAlignment="CENTER" textFill="#48fa48">
+                            <font>
+                                <Font name="SansSerif Regular" size="14.0" />
+                            </font>
+                            <padding>
+                                <Insets left="10.0" />
+                            </padding>
+                            <opaqueInsets>
+                                <Insets bottom="10.0" />
+                            </opaqueInsets>
+                        </Label>
+                    </children>
+                </HBox>
+                <ListView id="contentUsersListView" fx:id="contentUsersListView" focusTraversable="false" maxHeight="1.7976931348623157E308" minHeight="500.0" prefHeight="500.0" prefWidth="200.0" style="-fx-border-image-width: 0;">
+                    <!-- Bloc 1 : Profil d'utilisateur   -->
+                    <VBox spacing="10">
+                        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="userblok">
+                            <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="49.0" styleClass="btnImg" />
+                            <VBox prefHeight="41.0" prefWidth="113.0">
+                                <Label prefHeight="21.0" prefWidth="118.0" styleClass="label1" text="USER_02" />
+                                <HBox>
+                                    <Label prefHeight="21.0" prefWidth="118.0" styleClass="label2" text="Alice kamto" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Bloc 1 : Profil d'utilisateur  -->
+                    <VBox spacing="10" styleClass="userFBlock" />
+               <padding>
+                  <Insets top="15.0" />
+               </padding> 
+
+                </ListView>
+
+            </children>
+        </VBox>
+    </left>
+    <top>
+        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #031c30;" BorderPane.alignment="CENTER">
+            <center>
+                <HBox alignment="CENTER" spacing="10">
+               <children>
+                  <Button id="currentProfile" mnemonicParsing="false" styleClass="btnImg">
+                     <HBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Label fx:id="CurrentUsername" prefHeight="34.0" prefWidth="165.0" text="Label" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#handleActionLogout" prefHeight="34.0" prefWidth="132.0" style="-fx-background-color: #ca1d1d;" text="Deconnecter" textFill="WHITE">
+                     <font>
+                        <Font name="Cooper Black" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+                </HBox>
+            </center>
+            <right>
+                <HBox alignment="CENTER" prefHeight="24.0" prefWidth="30.0" spacing="10.0" style="-fx-padding: 10">
+                    <children>
+                        <!-- Bouton appel-->
+                        <Button id="audioCallBtn" fx:id="callBtnAudio" onAction="#signalAudioCall" styleClass="btnImg"> 
+                        </Button>
+
+                        <!-- Bouton appel vidéo -->
+                        <Button id="videoCallBtn" fx:id="callBtnVideo" onAction="#signalVideoCall" styleClass="btnImg"> 
+                        </Button>
+                    </children>
+                </HBox> 
+            </right>
+            <left>
+                <HBox prefWidth="259.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <VBox>
+                            <HBox.margin>
+                                <Insets left="10.0" top="30.0" />
+                            </HBox.margin>
+                        </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="78.0" prefWidth="249.0">
+                     <children>
+                              <ImageView fx:id="userImageView" fitHeight="70.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../img/logo.png" />
+                                  </image>
+                                  <HBox.margin>
+                                      <Insets bottom="10.0" left="10.0" top="10.0" />
+                                  </HBox.margin>
+                              </ImageView>
+                     </children>
+                  </HBox>
+                    </children>
+                </HBox>
+            </left>
+        </BorderPane>
+    </top>
+    <rotationAxis>
+        <Point3D />
+    </rotationAxis>
+</BorderPane>
