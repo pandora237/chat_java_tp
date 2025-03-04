@@ -52,6 +52,7 @@ public class ChatApp extends Application {
 		Scene scene = new Scene(root, 1024, 700);
 		win.setScene(scene);
 		win.setTitle("Application Chat");
+		win.setResizable(false); 
 		win.show();
 	}
 
