@@ -37,9 +37,7 @@ import javafx.stage.Stage;
 
 public class AudioCallWindow {
 
-	protected Stage callStage;
-//	protected static final String SERVER_IP = "127.0.0.1"; // adresse IP du serveur
-//	protected static final int PORT = 8082;
+	protected Stage callStage; 
 	protected static final int bufferSize = 15048;
 
 	protected volatile boolean running = true; // Flag pour indiquer si le client est actif

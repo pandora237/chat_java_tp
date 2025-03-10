@@ -1,7 +1,7 @@
 package com.chat_java_tp_client.helpers;
 
 import java.io.IOException;
-import java.io.InputStream; 
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -23,12 +23,18 @@ public class SocketManagerCall {
 		return out;
 	}
 
-	protected static final String SERVER_IP = "127.0.0.1";
-	protected static int PORT = 8082;
+	protected static String SERVER_IP;
+	protected static int PORT;
 
 	protected Socket socket;
 	protected InputStream in;
 	protected PrintWriter out;
+
+	public SocketManagerCall() {
+		ConfigEnv config_env = new ConfigEnv();
+		SERVER_IP = config_env.get("SERVER_IP_AUDIO_VIDEO");
+		PORT = Integer.parseInt(config_env.get("PORT_AUDIO_VIDEO"));
+	}
 
 	public void connect() throws IOException {
 		socket = new Socket(SERVER_IP, PORT);

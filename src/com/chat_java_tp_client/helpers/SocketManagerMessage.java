@@ -24,12 +24,18 @@ public class SocketManagerMessage {
 		return out;
 	}
 
-	private static final String SERVER_IP = "127.0.0.1";
-	protected static int PORT = 8081;
+	private static String SERVER_IP;
+	protected static int PORT;
 
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
+
+	public SocketManagerMessage() {
+		ConfigEnv config_env = new ConfigEnv();
+		SERVER_IP = config_env.get("SERVER_IP_MESSAGE");
+		PORT = Integer.parseInt(config_env.get("PORT_MESSAGE"));
+	}
 
 	public void connect() throws IOException {
 		socket = new Socket(SERVER_IP, PORT);
