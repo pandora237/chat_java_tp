@@ -3,23 +3,23 @@ package com.chat_java_tp_client.helpers;
 import java.io.*;
 import java.net.Socket;
 
-public class SocketManagerCall implements AutoCloseable {
+public class SocketManagerCall2 implements AutoCloseable {
 
 	protected static String SERVER_IP;
 	protected static int PORT_SEND;
 	protected static int PORT_RECEIVE;
 
 	protected Socket socket_send;
-	protected InputStream in_send;
-	protected PrintWriter out_send;
+	protected DataInputStream in_send;
+	protected DataOutputStream out_send;
 
 	protected Socket socket_receive;
-	protected InputStream in_receive;
-	protected PrintWriter out_receive;
+	protected DataInputStream in_receive;
+	protected DataOutputStream out_receive;
 
 	ConfigEnv config_env;
 
-	public SocketManagerCall() {
+	public SocketManagerCall2() {
 		config_env = new ConfigEnv();
 		SERVER_IP = config_env.get("SERVER_IP_AUDIO_VIDEO");
 		PORT_SEND = Integer.parseInt(config_env.get("PORT_AUDIO"));
@@ -29,12 +29,12 @@ public class SocketManagerCall implements AutoCloseable {
 	public void connect() {
 		try {
 			socket_send = new Socket(SERVER_IP, PORT_SEND);
-			in_send = new BufferedInputStream(socket_send.getInputStream());
-			out_send = new PrintWriter(new BufferedOutputStream(socket_send.getOutputStream()), true);
+			in_send = new DataInputStream(socket_send.getInputStream());
+			out_send = new DataOutputStream(socket_send.getOutputStream());
 
 			socket_receive = new Socket(SERVER_IP, PORT_RECEIVE);
-			in_receive = new BufferedInputStream(socket_receive.getInputStream());
-			out_receive = new PrintWriter(new BufferedOutputStream(socket_receive.getOutputStream()), true);
+			in_receive = new DataInputStream(socket_receive.getInputStream());
+			out_receive = new DataOutputStream(socket_receive.getOutputStream());
 
 			System.out.println("Connecté à " + SERVER_IP + " sur les ports " + PORT_SEND + " et " + PORT_RECEIVE);
 		} catch (IOException e) {
@@ -43,19 +43,19 @@ public class SocketManagerCall implements AutoCloseable {
 		}
 	}
 
-	public InputStream getInputStreamSend() {
+	public DataInputStream getInputStreamSend() {
 		return in_send;
 	}
 
-	public PrintWriter getOutputStreamSend() {
+	public DataOutputStream getOutputStreamSend() {
 		return out_send;
 	}
 
-	public InputStream getInputStreamReceive() {
+	public DataInputStream getInputStreamReceive() {
 		return in_receive;
 	}
 
-	public PrintWriter getOutputStreamReceive() {
+	public DataOutputStream getOutputStreamReceive() {
 		return out_receive;
 	}
 

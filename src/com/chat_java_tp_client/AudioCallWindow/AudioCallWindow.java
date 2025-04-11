@@ -2,9 +2,7 @@ package com.chat_java_tp_client.AudioCallWindow;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -20,36 +18,38 @@ import com.chat_java_tp_client.controllers.ChatController;
 import com.chat_java_tp_client.helpers.AppState;
 import com.chat_java_tp_client.helpers.Helpers;
 import com.chat_java_tp_client.helpers.SocketManagerCall;
-import com.chat_java_tp_client.helpers.SocketManagerMessage;
 import com.chat_java_tp_client.sound.Sound;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class AudioCallWindow {
 
-	protected Stage callStage; 
-	protected static final int bufferSize = 15048;
+	protected boolean receiveTransmit = false; // utiliser pour activer l'envoie et reception de receveur d'appel
+
+	protected Stage callStage;
+	protected static final int bufferSize = 8000;
 
 	protected volatile boolean running = true; // Flag pour indiquer si le client est actif
-	protected Thread audioSenderThread; // Thread pour envoyer les audios
-	protected Thread audioReceiverThread; // Thread pour recevoir les audios
+	protected Thread audioSenderThreadSend; // Thread pour envoyer les audios
+	protected Thread audioReceiverThreadSend; // Thread pour recevoir les audios
 	private TargetDataLine microphone; // Ligne pour capturer l'audio du micro
 	protected final ChatController parentWin;
+
+	/*
+	 * Receive
+	 */
+	protected Thread audioSenderThreadReceive; // Thread pour envoyer les audios
+	protected Thread audioReceiverThreadReceive; // Thread pour recevoir les audios
 
 	protected AudioFormat audioFormat;
 	protected DataLine.Info infoAudio;
 	protected SourceDataLine speaker;
-	private AudioCallController callController;
+	protected AudioCallController callController;
 
 	protected SocketManagerCall socketManagerCall = new SocketManagerCall();
 
@@ -61,13 +61,12 @@ public class AudioCallWindow {
 	public AudioCallWindow(ChatController parentWin) {
 		this.parentWin = parentWin;
 		soundApp = new Sound();
-		audioFormat = new AudioFormat(22050, 16, 1, true, false);
+//		audioFormat = new AudioFormat(22050, 16, 1, true, false);
+		audioFormat = new AudioFormat(8000, 16, 1, true, false);
 		infoAudio = new DataLine.Info(TargetDataLine.class, audioFormat);
-		socketManagerCall = new SocketManagerCall();
 	}
 
 	public void startCallWindow(Boolean is_receive) {
-
 		try {
 			callStage = new Stage();
 			callStage.setTitle("Appel Audio " + (is_receive ? "entrant" : " sortant "));
@@ -109,31 +108,6 @@ public class AudioCallWindow {
 //				alert.setContentText("Détails : " + e.getMessage()); 
 			});
 		}
-
-//		Button answerButton = new Button("Décrocher");
-//
-//		Button endButton = new Button("Terminer");
-//		endButton.setOnAction(e -> endCall());
-//
-//		VBox layout = new VBox(10, answerButton, endButton);
-//		layout.setPadding(new Insets(10));
-//
-//		Scene scene = new Scene(layout, 200, 150);
-//		callStage.setScene(scene);
-//		callStage.setOnCloseRequest(event -> {
-//			endCall();
-//			event.consume();
-//		});
-//		callStage.show();
-//
-//		if (auto) {
-//			answerButton.setDisable(true);
-//			// Connexion au serveur
-//			sendOrReceive(false);
-//		} else {
-//			soundApp.playSound(Sound.CALL_AUDIO, true);
-//			answerButton.setOnAction(e -> answerCall());
-//		}
 	}
 
 	public void sendOrReceive(boolean is_receive) {
@@ -141,13 +115,30 @@ public class AudioCallWindow {
 			speaker = Helpers.initSpeaker(audioFormat);
 			if (is_receive) {
 				// Thread pour recevoir les donnees capturés
-				audioReceiverThread = new Thread(() -> {
-					handleReceiveData();
+				audioReceiverThreadSend = new Thread(() -> {
+					handleReceiveData(is_receive);
 				});
-				audioReceiverThread.start();
+				audioReceiverThreadSend.start();
+				if (receiveTransmit) {
+					// Thread pour envoyer les donnees capturés
+					audioSenderThreadReceive = new Thread(() -> {
+						captureAndsendDatas(is_receive);
+					});
+					audioSenderThreadReceive.start();
+				}
 			} else {
-				captureAndsendDatas(is_receive);
+				// Thread pour envoyer les donnees capturés
+				audioSenderThreadSend = new Thread(() -> {
+					captureAndsendDatas(is_receive);
+				});
+				audioSenderThreadSend.start();
 
+				if (receiveTransmit) {
+					// Thread pour recevoir les donnees capturés du sender
+					audioReceiverThreadReceive = new Thread(() -> {
+						handleReceiveData(is_receive);
+					});
+				}
 			}
 
 		} catch (LineUnavailableException e) {
@@ -156,43 +147,46 @@ public class AudioCallWindow {
 	}
 
 	protected void captureAndsendDatas(Boolean is_receive) {
+		try {
+			if (!AudioSystem.isLineSupported(infoAudio)) {
+				System.err.println("Format audio non supporté : " + audioFormat);
+				return;
+			}
 
-		// Thread pour envoyer les donnees capturés
-		audioSenderThread = new Thread(() -> {
-			try {
-				if (!AudioSystem.isLineSupported(infoAudio)) {
-					System.err.println("Format audio non supporté : " + audioFormat);
-					return;
-				}
+			try (TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(infoAudio)) {
+				microphone.open(audioFormat);
+				microphone.start();
 
-				try (TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(infoAudio)) {
-					microphone.open(audioFormat);
-					microphone.start();
+				byte[] buffer = new byte[bufferSize];
+				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-					byte[] buffer = new byte[bufferSize];
-					ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-					while (running) {
-						int bytesRead = microphone.read(buffer, 0, buffer.length);
-						if (bytesRead > 0) {
-							// Encodez et envoyez
-							String message = Helpers.encodedData(buffer, true);
-							synchronized (socketManagerCall.getOutputStream()) {
-								socketManagerCall.getOutputStream().println(message);
+				while (running) {
+					int bytesRead = microphone.read(buffer, 0, buffer.length);
+					if (bytesRead > 0) {
+						// Encodez et envoyez
+						String message = Helpers.encodedData(buffer, true);
+						if (is_receive) {
+							synchronized (socketManagerCall.getOutputStreamReceive()) {
+								socketManagerCall.getOutputStreamReceive().println(message);
 							}
-							byteStream.reset(); // Réinitialisation pour le prochain paquet
+						} else {
+							synchronized (socketManagerCall.getOutputStreamSend()) {
+								socketManagerCall.getOutputStreamSend().println(message);
+							}
 						}
+
+						byteStream.reset(); // Réinitialisation pour le prochain paquet
+//							audioSenderThreadSend.sleep(3);
 					}
 				}
-			} catch (LineUnavailableException e) {
-				System.err.println("Ligne audio non disponible : " + e.getMessage());
 			}
-		});
-		audioSenderThread.start();
+		} catch (LineUnavailableException e) {
+			System.err.println("Ligne audio non disponible : " + e.getMessage());
+		}
 
 	}
 
-	private void handleReceiveData() {
+	private void handleReceiveData(boolean is_receive) {
 		try {
 			bufferStringBuilderAudio = new StringBuilder();
 			byte[] dataBuffer = new byte[bufferSize]; // Taille réduite pour une lecture plus fréquente
@@ -203,18 +197,21 @@ public class AudioCallWindow {
 			}
 
 			int bytesRead;
-			while ((bytesRead = socketManagerCall.getInputStream().read(dataBuffer)) != -1) {
-				dataProcesing(dataBuffer, bytesRead);
-//				hanlerPlayAudioBuffer(bufferStringBuilderAudio, dataBuffer, bytesRead);
+			if (is_receive) {
+				while ((bytesRead = socketManagerCall.getInputStreamSend().read(dataBuffer)) != -1) {
+					dataProcesing(dataBuffer, bytesRead);
+				}
+			} else {
+				while ((bytesRead = socketManagerCall.getInputStreamReceive().read(dataBuffer)) != -1) {
+					dataProcesing(dataBuffer, bytesRead);
+				}
 			}
+
 		} catch (IOException e) {
-			System.out.println("Client d'appel déconnecté : " + socketManagerCall.getSocket());
+//			System.out.println("Client d'appel déconnecté : " + socketManagerCall.getSocket());
+			System.out.println("Client d'appel déconnecté : ");
 		} finally {
-			try {
-				socketManagerCall.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			socketManagerCall.close();
 		}
 	}
 
@@ -275,8 +272,8 @@ public class AudioCallWindow {
 		}
 
 		// Fermeture du thread d'envoi audio
-		if (audioSenderThread != null && audioSenderThread.isAlive()) {
-			audioSenderThread.interrupt();
+		if (audioSenderThreadSend != null && audioSenderThreadSend.isAlive()) {
+			audioSenderThreadSend.interrupt();
 		}
 
 		// Arrêt du thread de réception et fermeture du speaker
@@ -294,8 +291,8 @@ public class AudioCallWindow {
 		// S'assurer que le thread de réception est arrêté
 		// (vous pourriez avoir un thread de réception qui gère la lecture du audio du
 		// serveur)
-		if (audioReceiverThread != null && audioReceiverThread.isAlive()) {
-			audioReceiverThread.interrupt(); // Arrêter le thread de réception
+		if (audioReceiverThreadSend != null && audioReceiverThreadSend.isAlive()) {
+			audioReceiverThreadSend.interrupt(); // Arrêter le thread de réception
 		}
 
 		// Fermeture de la scène de l'appel
@@ -310,13 +307,13 @@ public class AudioCallWindow {
 		});
 
 		// Envoi d'un message au serveur pour notifier de la fin de l'appel
-		if (socketManagerCall.getOutputStream() != null) {
+		if (socketManagerCall.getOutputStreamSend() != null) {
 			signalEndCall();
 		}
 	}
 
 	private void signalEndCall() {
-		PrintWriter out = socketManagerCall.getOutputStream();
+		PrintWriter out = socketManagerCall.getOutputStreamSend();
 		if (out != null) {
 			JSONObject signal = new JSONObject();
 			signal.put("action", Helpers.endCallType);
@@ -332,7 +329,9 @@ public class AudioCallWindow {
 			soundApp.stopSound();
 			socketManagerCall.connect();
 			sendOrReceive(true);
-			callController.updateButtonState(true);
+			if (callController != null) {
+				callController.updateButtonState(true);
+			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

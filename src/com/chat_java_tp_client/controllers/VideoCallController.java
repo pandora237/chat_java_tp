@@ -3,9 +3,9 @@ package com.chat_java_tp_client.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.chat_java_tp_client.AudioCallWindow.AudioCallWindow;
+import com.chat_java_tp_client.VideoCallWindow.VideoCallWindow;
 import com.chat_java_tp_client.helpers.AppState;
-import com.chat_java_tp_client.helpers.SocketManagerCall;
+import com.chat_java_tp_client.helpers.SocketManagerCallVideo;
 import com.chat_java_tp_client.sound.Sound;
 
 import javafx.scene.image.Image;
@@ -19,9 +19,9 @@ import javafx.scene.image.ImageView;
 public class VideoCallController implements Initializable {
 
 	private Sound soundApp;
-	private SocketManagerCall socketManagerCall;
+	private SocketManagerCallVideo SocketManagerCallVideo;
 	private AppState appState;
-	private AudioCallWindow mainAudioCallWindow;
+	private VideoCallWindow mainVideoCallWindow;
 
 	@FXML
 	private Button btnEndCall;
@@ -39,19 +39,19 @@ public class VideoCallController implements Initializable {
 
 	@FXML
 	public void handlerStartCall(ActionEvent e) {
-		mainAudioCallWindow.answerCall();
+		mainVideoCallWindow.answerCall();
 	}
 
 	@FXML
 	public void handlerEndCall(ActionEvent e) {
-		mainAudioCallWindow.endCall();
+		mainVideoCallWindow.endCall();
 	}
 
-	public void setMainCallApp(AudioCallWindow audioCallWindow) {
-		this.mainAudioCallWindow = audioCallWindow;
-		this.appState = audioCallWindow.getAppState();
-		this.socketManagerCall = audioCallWindow.getSocketManagerCall();
-		this.soundApp = audioCallWindow.getSoundApp();
+	public void setMainCallApp(VideoCallWindow VideoCallWindow) {
+		this.mainVideoCallWindow = VideoCallWindow;
+		this.appState = VideoCallWindow.getAppState();
+		this.SocketManagerCallVideo = VideoCallWindow.getSocketManagerCallVideo();
+		this.soundApp = VideoCallWindow.getSoundApp();
 	}
 
 	public void updateButtonState(boolean isCallActive) {

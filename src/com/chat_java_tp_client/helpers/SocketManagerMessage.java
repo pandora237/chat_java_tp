@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+
 public class SocketManagerMessage {
+
+	private static ConfigEnv config_env;
 
 	public Socket getSocket() {
 		return socket;
@@ -32,7 +35,7 @@ public class SocketManagerMessage {
 	private PrintWriter out;
 
 	public SocketManagerMessage() {
-		ConfigEnv config_env = new ConfigEnv();
+		config_env = new ConfigEnv();
 		SERVER_IP = config_env.get("SERVER_IP_MESSAGE");
 		PORT = Integer.parseInt(config_env.get("PORT_MESSAGE"));
 	}

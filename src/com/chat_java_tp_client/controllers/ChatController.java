@@ -110,16 +110,16 @@ public class ChatController implements Initializable {
 			JSONObject signal = new JSONObject();
 			signal.put("action", Helpers.audioType);
 			signal.put("content", "Repond a mon appel");
-			
+
 			signal.put("type", Helpers.audioType);
 			boxMessage.addMessage(new Message(signal), currentUser);
-//			socketManagerMessage.getOutputStream().println(signal.toString());
-//			Platform.runLater(() -> {
-//				AudioCallWindow audioCallWindow = new AudioCallWindow(this);
-//				audioCallWindow.startCallWindow(false);
-//				initBtnCallDisabled();
-//			});
-			
+			socketManagerMessage.getOutputStream().println(signal.toString());
+			Platform.runLater(() -> {
+				AudioCallWindow audioCallWindow = new AudioCallWindow(this);
+				audioCallWindow.startCallWindow(false);
+				initBtnCallDisabled();
+			});
+
 		}
 	}
 
@@ -134,12 +134,15 @@ public class ChatController implements Initializable {
 			JSONObject signal = new JSONObject();
 			signal.put("action", Helpers.videoType);
 			signal.put("content", "Repond à mon appel vidéo");
+
+			signal.put("type", Helpers.videoType);
+			boxMessage.addMessage(new Message(signal), currentUser);
 			socketManagerMessage.getOutputStream().println(signal.toString());
 
 			// Affichage de la fenêtre vidéo
 			Platform.runLater(() -> {
 				VideoCallWindow videoCallWindow = new VideoCallWindow(this);
-				videoCallWindow.startCallWindow(true);
+				videoCallWindow.startCallWindow(false);
 				initBtnCallDisabled();
 			});
 		}
@@ -282,11 +285,12 @@ public class ChatController implements Initializable {
 				return;
 			}
 			JSONObject mess = jsonObject.getJSONObject("datas");
-			addContentMessageListview(mess);
+			boxMessage.addMessage(new Message(mess), currentUser);
+//			addContentMessageListview(mess); 
 //									messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
 			Platform.runLater(() -> {
 				VideoCallWindow videoCallWindow = new VideoCallWindow(this);
-				videoCallWindow.startCallWindow(false);
+				videoCallWindow.startCallWindow(true);
 				initBtnCallDisabled();
 			});
 		} else if (Helpers.otherUserLogged.equals(jsonObject.get("action"))) {
@@ -325,8 +329,6 @@ public class ChatController implements Initializable {
 	}
 
 	public void firstConnection() {
-		System.out.println(currentUser);
-		System.out.println(CurrentUsername);
 		if (currentUser != null) {
 			CurrentUsername.setText(currentUser.getUsername());
 		}
@@ -335,8 +337,7 @@ public class ChatController implements Initializable {
 		boxMessage = new MessageController(contentMessageListView);
 		boxMessage.removeAllChild();
 		for (int i = 0; i < appState.getOldmessages().length(); i++) {
-			JSONObject message = appState.getOldmessages().getJSONObject(i);
-			System.out.println(message);
+			JSONObject message = appState.getOldmessages().getJSONObject(i); 
 			boxMessage.addMessage(new Message(message), currentUser);
 		}
 		updateUserBlock();

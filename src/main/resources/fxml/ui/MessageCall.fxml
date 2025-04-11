@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="5" stylesheets="@../../css/ui/main-ui.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1">
+<VBox spacing="5" stylesheets="@../../css/ui/main-ui.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <HBox styleClass="HBoxRight"> 
         <VBox styleClass="VBoxRight">
             <Label fx:id="senderLabel" styleClass="senderLabel" text="John Doe" />
          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="contentLabel">
             <children>
-               <ImageView fitHeight="47.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
+               <ImageView fx:id="iconCall" fitHeight="47.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
                   <HBox.margin>
                      <Insets right="10.0" />
                   </HBox.margin>
