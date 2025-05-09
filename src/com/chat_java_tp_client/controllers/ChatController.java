@@ -400,7 +400,7 @@ public class ChatController implements Initializable {
 			audioCallWindow.setPort_come(port);
 			System.out.println("reception: " + jsonObject);
 			// reception
-//			audioCallWindow.getReceiveCall().start(ip, port);
+			audioCallWindow.getReceiveCall().start(ip, port);
 
 		} else if (Helpers.videoType.equals(jsonObject.get("action"))) {
 			if (isCall) {
@@ -439,7 +439,8 @@ public class ChatController implements Initializable {
 			videoCallWindow.setPort_come_video(port_video);
 			System.out.println("reception: " + jsonObject);
 			// reception
-//			videoCallWindow.getReceiveCall().start(ip, port);
+			videoCallWindow.getReceiveCall().start(ip, port);
+			videoCallWindow.getReceiveCallVideo().start(ip, port, videoCallWindow.getCallControllerVideo());
 
 		} else if (Helpers.otherUserLogged.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");

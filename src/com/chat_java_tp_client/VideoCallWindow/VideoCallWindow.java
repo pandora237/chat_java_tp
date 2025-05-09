@@ -143,6 +143,14 @@ public class VideoCallWindow extends AudioCallWindow {
 		return receiveCallVideo;
 	}
 
+	public VideoCallController getCallControllerVideo() {
+		return callControllerVideo;
+	}
+
+	public void setCallControllerVideo(VideoCallController callControllerVideo) {
+		this.callControllerVideo = callControllerVideo;
+	}
+
 	public void setReceiveCallVideo(ReceiveCallVideo receiveCallVideo) {
 		this.receiveCallVideo = receiveCallVideo;
 	}
