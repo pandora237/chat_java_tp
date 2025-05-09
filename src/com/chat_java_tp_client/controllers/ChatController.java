@@ -172,7 +172,9 @@ public class ChatController implements Initializable {
 			if (portVideo != 0) {
 				signal.put("port_video", port);
 			}
-			socketManagerMessage.getOutputStream().println(signal);
+
+			socketManagerMessage.getOutputStream().println(signal.toString());
+			System.out.println("signalRespCall : "+signal);
 		}
 	}
 

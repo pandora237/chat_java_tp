@@ -157,8 +157,7 @@ public class AudioCallWindow {
 
 	public void answerCall() {
 		try {
-			soundApp.stopSound();
-
+			soundApp.stopSound(); 
 			sendOrReceive(true, true);
 
 			if (callController != null) {

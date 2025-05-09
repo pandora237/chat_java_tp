@@ -37,7 +37,7 @@ public class ReceiveCall {
 		infoAudio = new DataLine.Info(TargetDataLine.class, audioFormat);
 	}
 
-	public void start(String ip, int port) {
+	public void start(String ip, int port) { 
 		try {
 			speaker = Helpers.initSpeaker(audioFormat);
 			socket = new Socket(ip, port);

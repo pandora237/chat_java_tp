@@ -1,8 +1,6 @@
 package com.chat_java_tp_client;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,7 +31,7 @@ public class ServerCallVideo {
 
 	public void startServer(VideoCallController callController) {
 		try {
-			serverSocket_video = new ServerSocket(0); // Choisir automatiquement un port libre
+			serverSocket_video = new ServerSocket(0); // Port dynamique
 			PORT_VIDEO = serverSocket_video.getLocalPort();
 			System.out.println("Video server started on port: " + PORT_VIDEO);
 		} catch (IOException e) {
@@ -42,68 +40,63 @@ public class ServerCallVideo {
 		}
 		this.callController = callController;
 
+		// Démarrer la capture vidéo dès le lancement du serveur
+		startCameraCaptureThread();
+
+		// Attendre les connexions clients
 		serverThread_video = new Thread(() -> {
 			while (running_video.get()) {
 				try {
 					clientSocket = serverSocket_video.accept();
-					new Thread(() -> {
-						try {
-							handleClient(clientSocket);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}).start();
+					System.out.println("Client vidéo connecté : " + clientSocket.getInetAddress());
 				} catch (IOException e) {
-					if (running_video.get()) {
+					if (running_video.get())
 						e.printStackTrace();
-					} else {
+					else
 						System.out.println("Serveur vidéo arrêté.");
-					}
 				}
 			}
 		});
 		serverThread_video.start();
 	}
 
-	private void handleClient(Socket clientSocket) throws IOException {
-		System.out.println("Client vidéo connecté : " + clientSocket.getInetAddress());
-
-		VideoCapture camera = new VideoCapture(0); // Webcam par défaut
-		OutputStream outputStream = null;
-
-		if (!camera.isOpened()) {
-			System.err.println("Impossible d’ouvrir la webcam");
-			return;
-		}
-
-		try {
-			Mat frame = new Mat();
-			outputStream = new BufferedOutputStream(clientSocket.getOutputStream());
-			PrintWriter out_send = new PrintWriter(outputStream, true);
-
-			System.out.println("Envoi vidéo en cours... : ");
-
-			while (running_video.get() && clientSocket.isConnected() && !Thread.currentThread().isInterrupted()) {
-				camera.read(frame);
-				if (!frame.empty()) {
-					Image img = Helpers.matToImage(frame);
-					callController.updateVideo(false, img);
-
-					String message = Helpers.encodedData(matToByteArray(frame), false);
-					System.out.println("messagemessage :: " + clientSocket + message);
-					out_send.println(message);
-				}
-				Thread.sleep(50); // ~20 FPS
+	private void startCameraCaptureThread() {
+		new Thread(() -> {
+			VideoCapture camera = new VideoCapture(0); // Webcam par défaut
+			if (!camera.isOpened()) {
+				System.err.println("Impossible d’ouvrir la webcam");
+				return;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			camera.release();
-			if (outputStream != null)
-				outputStream.close();
-			clientSocket.close();
-			System.out.println("Fin de l’envoi vidéo.");
-		}
+
+			try {
+				Mat frame = new Mat(); 
+				
+				while (running_video.get()) {
+					camera.read(frame);
+					if (!frame.empty()) {
+						Image img = Helpers.matToImage(frame);
+						callController.updateVideo(false, img); // Affichage local
+
+						// Si client connecté, envoyer l’image
+						if (clientSocket != null && clientSocket.isConnected()) {
+							try {
+								String message = Helpers.encodedData(matToByteArray(frame), false);
+								PrintWriter out_send = new PrintWriter(clientSocket.getOutputStream(), true);
+								out_send.println(message);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					Thread.sleep(50); // ~20 FPS
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				camera.release();
+				System.out.println("Capture vidéo arrêtée.");
+			}
+		}).start();
 	}
 
 	private byte[] matToByteArray(Mat frame) {
