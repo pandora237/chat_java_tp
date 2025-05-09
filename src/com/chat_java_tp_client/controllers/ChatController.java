@@ -442,7 +442,7 @@ public class ChatController implements Initializable {
 			System.out.println("reception: " + jsonObject);
 			// reception
 			videoCallWindow.getReceiveCall().start(ip, port);
-			videoCallWindow.getReceiveCallVideo().start(ip, port, videoCallWindow.getCallControllerVideo());
+			videoCallWindow.getReceiveCallVideo().start(ip, port_video, videoCallWindow.getCallControllerVideo());
 
 		} else if (Helpers.otherUserLogged.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");

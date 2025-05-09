@@ -23,6 +23,7 @@ public class ServerCallVideo {
 	}
 
 	Thread serverThread_video;
+	private Thread cameraThread;
 	private ServerSocket serverSocket_video;
 	private int PORT_VIDEO;
 	private final AtomicBoolean running_video = new AtomicBoolean(true);
@@ -61,7 +62,7 @@ public class ServerCallVideo {
 	}
 
 	private void startCameraCaptureThread() {
-		new Thread(() -> {
+		cameraThread = new Thread(() -> {
 			VideoCapture camera = new VideoCapture(0); // Webcam par défaut
 			if (!camera.isOpened()) {
 				System.err.println("Impossible d’ouvrir la webcam");
@@ -69,8 +70,7 @@ public class ServerCallVideo {
 			}
 
 			try {
-				Mat frame = new Mat(); 
-				
+				Mat frame = new Mat();
 				while (running_video.get()) {
 					camera.read(frame);
 					if (!frame.empty()) {
@@ -96,7 +96,8 @@ public class ServerCallVideo {
 				camera.release();
 				System.out.println("Capture vidéo arrêtée.");
 			}
-		}).start();
+		});
+		cameraThread.start();
 	}
 
 	private byte[] matToByteArray(Mat frame) {
@@ -136,7 +137,11 @@ public class ServerCallVideo {
 
 		if (serverThread_video != null && serverThread_video.isAlive()) {
 			serverThread_video.interrupt();
-			System.out.println("Thread serveur vidéo interrompu.");
+			System.out.println("Thread serveur vidéo interro3mpu.");
+		}
+		if (cameraThread != null && cameraThread.isAlive()) {
+			cameraThread.interrupt();
+			System.out.println("Thread capture vidéo interrompu.");
 		}
 	}
 
