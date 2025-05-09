@@ -11,6 +11,7 @@ public class User {
 	private String dateAdd;
 	private int isLogged;
 	private String sexe; // M, F
+ 
 
 	public static final String sexeM = "M";
 	public static final String sexeF = "F";
@@ -100,6 +101,7 @@ public class User {
 	public String getSexe() {
 		return this.sexe;
 	}
+ 
 
 	@Override
 	public String toString() {

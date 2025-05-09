@@ -1,55 +1,97 @@
 package com.chat_java_tp_client.controllers;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
+import com.chat_java_tp_client.ChatApp;
+import com.chat_java_tp_client.helpers.AppState;
 import com.chat_java_tp_client.helpers.Helpers;
 import com.chat_java_tp_client.helpers.User;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class UserBlocController {
+public class UserBlocController implements Initializable {
 
-	private ListView<VBox> userContainer; // Conteneur principal pour ajouter les messages
+	private ChatApp mainApp;
+	private AppState appState;
 
-	public UserBlocController(ListView userContainer) {
-		this.userContainer = userContainer;
+	@FXML
+	private Label name;
+
+	@FXML
+	private Label statusUser;
+
+	@FXML
+	private HBox stautusUserBlock;
+
+	@FXML
+	private Label userName;
+	private User selectedUser;
+
+	private User user;
+
+	private ChatController chatController;
+
+	@FXML
+	void actionSelectedUser(MouseEvent event) {
+		appState.setSelecetedUser(user);
+		mainApp.setAppSte(appState);
+		chatController.ChangeUser(user);
 	}
 
-	public void addUser(User user) {
-		try {
-			FXMLLoader loader;
-			VBox userBlock;
-			loader = new FXMLLoader(getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/userBlock.fxml"));
-			userBlock = loader.load();
-			setUserData(userBlock, user);
-			if (user.getSexe().equals(User.sexeF)) {
-				userBlock.getStyleClass().add("userFBlock");
-			}
-			if (user.getIsLogged() != 0) {
-				userBlock.getStyleClass().add("statusOnline");
-			}else {
-				userBlock.getStyleClass().add("statusOffline");
-			}
-			userContainer.getItems().add(userBlock);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public UserBlocController() {
 	}
 
-	private void setUserData(VBox userBlock, User user) {
-		Label userNameLabel = (Label) userBlock.lookup("#userName");
-		Label nameLabel = (Label) userBlock.lookup("#name");
-		Label statusLabel = (Label) userBlock.lookup("#statusUser");
-
-		userNameLabel.setText(user.getUsername());
-		nameLabel.setText(user.getFirstname() + " " + user.getLastname());
-		statusLabel.setText(user.getIsLogged() == 0 ? "Deconnecter" : "En ligne");
+	private void updateDatas() {
+		userName.setText(user.getUsername());
+		name.setText(user.getFirstname() + " " + user.getLastname());
+		statusUser.setText(user.getIsLogged() == 0 ? "Deconnecter" : "En ligne");
 	}
 
-	public void removeAllChild() {
-		userContainer.getItems().clear();
+	public ChatApp getMainApp() {
+		return mainApp;
+	}
+
+	public void setMainApp(ChatApp mainApp) {
+		this.mainApp = mainApp;
+	}
+
+	public AppState getAppState() {
+		return appState;
+	}
+
+	public void setAppState(AppState appState) {
+		this.appState = appState;
+		this.selectedUser = appState.getSelecetedUser();
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+		updateDatas();
+	}
+
+	public ChatController getChatController() {
+		return chatController;
+	}
+
+	public void setChatController(ChatController chatController) {
+		this.chatController = chatController;
+	}
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		// TODO Auto-generated method stub 
 	}
 }

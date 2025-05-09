@@ -25,11 +25,10 @@
 }
 
 
-
 .VBoxRight {
 	-fx-background-color: #459bbe;
 	-fx-padding: 5;
-	-fx-background-radius: 10;
+	-fx-background-radius: 10 10 10 0 ;
 }
 
 .nameLabel {
@@ -40,7 +39,7 @@
 }
 
 .contentLabel {
-	-fx-background-color: #93C5FD;
+	-fx-background-color: white;
 	-fx-text-fill: black;
 	-fx-padding: 15;
 	-fx-background-radius: 10;
@@ -51,6 +50,7 @@
 }
 
 .timeHLabel .label {
+	-fx-text-fill: white;
 	-fx-font-size: 8;
 	-fx-font-style: italic;
 	-fx-margin-left: 10;
@@ -64,8 +64,9 @@
 
 /*right*/
 .rightMe .VBoxRight {
-	-fx-background-color: #F97316;
+	-fx-background-color:  #031c30;
 	-fx-alignment: "TOP_RIGHT";
+	-fx-background-radius: 10 10 0 10;
 }
 
 .rightMe .HBoxRight {
@@ -77,7 +78,7 @@
 }
 
 .rightMe .VBoxRight .contentLabel {
-	-fx-background-color: #FDBA74;
+	-fx-background-color: white;
 }
 
 .rightMe .VBoxRight .timeHLabel .label {
@@ -95,7 +96,7 @@
 	-fx-background-color: #FDBA74;
 	-fx-padding: 10;
 	-fx-background-radius: 10;
-	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 5, 0.0, 2, 2);
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 9, 0.0, 2, 2);
 }
 
 .userblok .button {

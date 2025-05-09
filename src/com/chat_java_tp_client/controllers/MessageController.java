@@ -1,5 +1,6 @@
 package com.chat_java_tp_client.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -7,7 +8,7 @@ import java.util.ResourceBundle;
 import com.chat_java_tp_client.helpers.Helpers;
 import com.chat_java_tp_client.helpers.Message;
 import com.chat_java_tp_client.helpers.User;
-
+import java.io.FileInputStream;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,9 +21,11 @@ import javafx.scene.layout.VBox;
 public class MessageController {
 	private final String urlVideoImg = Helpers.getResourcesPath() + "img/videoCall.png";
 	private ListView<VBox> messageContainer; // Conteneur principal pour ajouter les messages
+	ChatController chatController;
 
-	public MessageController(ListView messageContainer) {
+	public MessageController(ListView messageContainer, ChatController chatController) {
 		this.messageContainer = messageContainer;
+		this.chatController = chatController;
 	}
 
 	// Méthode pour ajouter un message
@@ -30,7 +33,7 @@ public class MessageController {
 		try {
 			// Choisir le fichier FXML en fonction du type de message
 			FXMLLoader loader;
-			VBox messageBlock;
+			VBox messageBlock = null;
 			boolean isCurrentUser = false;
 			if (currentUser.getIdUser() == message.getIdSend()) {
 				isCurrentUser = true;
@@ -61,7 +64,32 @@ public class MessageController {
 				loader = new FXMLLoader(
 						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageFileSend.fxml"));
 				messageBlock = loader.load();
+				MessageFileSendController controller = loader.getController();
+				controller.setChatController(chatController);
+				controller.setMessage(message);
 				setFileMessageData(messageBlock, message, isCurrentUser);
+				break;
+			case Helpers.emoji:
+				try {
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageEmoji.fxml"));
+					messageBlock = loader.load();
+					ImageView imageEmoji = (ImageView) messageBlock.lookup("#ImageEmoji");
+
+					String nameImg = message.getFileName();
+					String filePath = Helpers.imageDirectoryPathEmoji + File.separator + nameImg;
+					File imageFile = new File(filePath);
+
+					if (imageFile.exists()) {
+						Image image = new Image(new FileInputStream(imageFile));
+						imageEmoji.setImage(image);
+					} else {
+						System.err.println("Fichier image non trouvé : " + filePath);
+					}
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 
 			default:
@@ -110,13 +138,16 @@ public class MessageController {
 
 	// Méthode pour configurer les données d'un fichier envoyé
 	private void setFileMessageData(VBox messageBlock, Message message, boolean isCurrentUser) {
+
 		Label senderLabel = (Label) messageBlock.lookup("#senderLabel");
 		ImageView imageView = (ImageView) messageBlock.lookup("#fileImageView");
 		Label timeLabel = (Label) messageBlock.lookup("#timeLabel");
+		Label fileName = (Label) messageBlock.lookup("#fileName");
 
 		senderLabel.setText(isCurrentUser ? "Vous" : message.getUsernameSend());
-		imageView.setImage(new Image("fxml/images/" + message.getFileName()));
-		timeLabel.setText(message.getDateAdd().toString());
+//		imageView.setImage(new Image("fxml/images/" + message.getFileName()));
+		timeLabel.setText(message.getDateAdd());
+		fileName.setText(message.getFileName());
 	}
 
 	public void removeAllChild() {

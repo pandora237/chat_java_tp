@@ -75,7 +75,7 @@ public class Message {
 
 	@Override
 	public String toString() {
-		return "Message{" + "idMessage=" + idMessage + ", idSend=" + idSend + ", idReceive=" + idReceive + ", content='"
+		return "Message{" + "idMessage=" + idMessage + ", idSend=" + idSend + ", idReceive=" + idReceive + ", fileName=" + fileName + ", content='"
 				+ content + '\'' + '}';
 	}
 }

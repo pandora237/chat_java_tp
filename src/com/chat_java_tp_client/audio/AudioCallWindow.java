@@ -76,7 +76,7 @@ public class AudioCallWindow {
 		if (auto) {
 			answerButton.setDisable(true);
 			// Connexion au serveur
-			connectToServer(false);
+//			connectToServer(false);
 		} else {
 			soundApp.playSound(Sound.CALL_AUDIO, true);
 			answerButton.setOnAction(e -> answerCall());
@@ -86,7 +86,7 @@ public class AudioCallWindow {
 	protected void answerCall() {
 		try {
 			soundApp.stopSound();
-			connectToServer(true);
+//			connectToServer(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -131,7 +131,7 @@ public class AudioCallWindow {
 			}
 
 			// Notifier le parent (par exemple pour réinitialiser l'état de l'application)
-			parentWin.handleEndCall();
+//			parentWin.handleEndCall();
 
 		});
 
@@ -140,122 +140,122 @@ public class AudioCallWindow {
 			signalEndCall();
 		}
 	}
+//
+//	public void connectToServer(boolean is_receive) {
+//		try {
+//			Socket socket = new Socket(SERVER_IP, PORT);
+//			speaker = Helpers.initSpeaker(audioFormat);
+//			if (is_receive) {
+//				// Thread pour recevoir les audios capturés
+//				audioReceiverThread = new Thread(() -> {
+//					handleReceiveData(socket);
+//				});
+//				audioReceiverThread.start();
+//			} else {
+//				out = new PrintWriter(socket.getOutputStream(), true);
+//				// Thread pour envoyer les audios capturés
+//				audioSenderThread = new Thread(this::sendAudioToServer);
+//				audioSenderThread.start();
+//			}
+//
+//		} catch (IOException | LineUnavailableException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	public void connectToServer(boolean is_receive) {
-		try {
-			Socket socket = new Socket(SERVER_IP, PORT);
-			speaker = Helpers.initSpeaker(audioFormat);
-			if (is_receive) {
-				// Thread pour recevoir les audios capturés
-				audioReceiverThread = new Thread(() -> {
-					handleReceiveData(socket);
-				});
-				audioReceiverThread.start();
-			} else {
-				out = new PrintWriter(socket.getOutputStream(), true);
-				// Thread pour envoyer les audios capturés
-				audioSenderThread = new Thread(this::sendAudioToServer);
-				audioSenderThread.start();
-			}
+//	protected void sendAudioToServer() {
+//		try {
+//
+//			if (!AudioSystem.isLineSupported(infoAudio)) {
+//				System.err.println("Format audio non supporté : " + audioFormat);
+//				return;
+//			}
+//
+//			try (TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(infoAudio)) {
+//				microphone.open(audioFormat);
+//				microphone.start();
+//
+//				byte[] buffer = new byte[bufferSize];
+//				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+//
+//				while (running) {
+//					int bytesRead = microphone.read(buffer, 0, buffer.length);
+//					if (bytesRead > 0) {
+//						// Encodez et envoyez immédiatement
+//						String message = Helpers.encodedData(buffer, true);
+//						synchronized (out) {
+//							out.println(message);
+//						}
+//						byteStream.reset(); // Réinitialisation pour le prochain paquet
+//					}
+//				}
+//			}
+//		} catch (LineUnavailableException e) {
+//			System.err.println("Ligne audio non disponible : " + e.getMessage());
+//		}
+//	}
 
-		} catch (IOException | LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void sendAudioToServer() {
-		try {
-
-			if (!AudioSystem.isLineSupported(infoAudio)) {
-				System.err.println("Format audio non supporté : " + audioFormat);
-				return;
-			}
-
-			try (TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(infoAudio)) {
-				microphone.open(audioFormat);
-				microphone.start();
-
-				byte[] buffer = new byte[bufferSize];
-				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-				while (running) {
-					int bytesRead = microphone.read(buffer, 0, buffer.length);
-					if (bytesRead > 0) {
-						// Encodez et envoyez immédiatement
-						String message = Helpers.encodedData(buffer, true);
-						synchronized (out) {
-							out.println(message);
-						}
-						byteStream.reset(); // Réinitialisation pour le prochain paquet
-					}
-				}
-			}
-		} catch (LineUnavailableException e) {
-			System.err.println("Ligne audio non disponible : " + e.getMessage());
-		}
-	}
-
-	protected void handleReceiveData(Socket sender) {
-		try {
-			InputStream in = sender.getInputStream();
-			byte[] dataBuffer = new byte[bufferSize]; // Taille réduite pour une lecture plus fréquente
-			StringBuilder buffer = new StringBuilder();
-
-			if (speaker == null) {
-				System.err.println("Speaker not init");
-				return;
-			}
-
-			int bytesRead;
-			while ((bytesRead = in.read(dataBuffer)) != -1) {
-				hanlerPlayAudioBuffer(buffer, dataBuffer, bytesRead);
-			}
-		} catch (IOException e) {
-			System.out.println("Client audio déconnecté : " + sender);
-		} finally {
-			try {
-				sender.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	protected void hanlerPlayAudioBuffer(StringBuilder buffer, byte[] dataBuffer, int bytesRead) {
-		String receivedFragment = new String(dataBuffer, 0, bytesRead);
-		if (receivedFragment.contains(Helpers.endCallType)) {
-			Platform.runLater(() -> {
-				endCall();
-			});
-			return;
-		}
-
-		buffer.append(receivedFragment);
-
-		// Traiter les messages complets
-		while (buffer.indexOf(Helpers.SeparatorAudio[0]) != -1 && buffer.indexOf(Helpers.SeparatorAudio[1]) != -1) {
-			int start = buffer.indexOf(Helpers.SeparatorAudio[0]) + Helpers.SeparatorAudio[0].length();
-			int end = buffer.indexOf(Helpers.SeparatorAudio[1]);
-			String completeMessage = buffer.substring(start, end);
-			buffer.delete(0, end + Helpers.SeparatorAudio[1].length());
-
-			// Décoder et vérifier les données
-			String[] parts = completeMessage.split("\\|");
-			if (parts.length == 2) {
-				String encodedAudio = parts[0];
-				String receivedChecksum = parts[1];
-
-				if (Helpers.calculateChecksum(encodedAudio).equals(receivedChecksum) && speaker != null) {
-					// decodage et Lecture des données audio
-					Helpers.decodeAndPlayAudioLocally(encodedAudio, bufferSize, speaker, audioFormat, infoAudio);
-				} else {
-					System.err.println("Erreur : les données reçues sont corrompues.");
-				}
-			} else {
-				System.err.println("Erreur : format de message incorrect.");
-			}
-		}
-	}
+//	protected void handleReceiveData(Socket sender) {
+//		try {
+//			InputStream in = sender.getInputStream();
+//			byte[] dataBuffer = new byte[bufferSize]; // Taille réduite pour une lecture plus fréquente
+//			StringBuilder buffer = new StringBuilder();
+//
+//			if (speaker == null) {
+//				System.err.println("Speaker not init");
+//				return;
+//			}
+//
+//			int bytesRead;
+//			while ((bytesRead = in.read(dataBuffer)) != -1) {
+//				hanlerPlayAudioBuffer(buffer, dataBuffer, bytesRead);
+//			}
+//		} catch (IOException e) {
+//			System.out.println("Client audio déconnecté : " + sender);
+//		} finally {
+//			try {
+//				sender.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+//
+//	protected void hanlerPlayAudioBuffer(StringBuilder buffer, byte[] dataBuffer, int bytesRead) {
+//		String receivedFragment = new String(dataBuffer, 0, bytesRead);
+//		if (receivedFragment.contains(Helpers.endCallType)) {
+//			Platform.runLater(() -> {
+//				endCall();
+//			});
+//			return;
+//		}
+//
+//		buffer.append(receivedFragment);
+//
+//		// Traiter les messages complets
+//		while (buffer.indexOf(Helpers.SeparatorAudio[0]) != -1 && buffer.indexOf(Helpers.SeparatorAudio[1]) != -1) {
+//			int start = buffer.indexOf(Helpers.SeparatorAudio[0]) + Helpers.SeparatorAudio[0].length();
+//			int end = buffer.indexOf(Helpers.SeparatorAudio[1]);
+//			String completeMessage = buffer.substring(start, end);
+//			buffer.delete(0, end + Helpers.SeparatorAudio[1].length());
+//
+//			// Décoder et vérifier les données
+//			String[] parts = completeMessage.split("\\|");
+//			if (parts.length == 2) {
+//				String encodedAudio = parts[0];
+//				String receivedChecksum = parts[1];
+//
+//				if (Helpers.calculateChecksum(encodedAudio).equals(receivedChecksum) && speaker != null) {
+//					// decodage et Lecture des données audio
+//					Helpers.decodeAndPlayAudioLocally(encodedAudio, bufferSize, speaker, audioFormat, infoAudio);
+//				} else {
+//					System.err.println("Erreur : les données reçues sont corrompues.");
+//				}
+//			} else {
+//				System.err.println("Erreur : format de message incorrect.");
+//			}
+//		}
+//	}
 
 	private void signalEndCall() {
 		if (out != null) {

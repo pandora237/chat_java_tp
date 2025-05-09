@@ -7,6 +7,7 @@ public class AppState {
 	private User currentUser;
 	private JSONArray allUsers;
 	private JSONArray oldmessages;
+	private User selecetedUser;
 
 	public AppState() {
 		// Initialisation des données globales
@@ -42,4 +43,14 @@ public class AppState {
 	public JSONArray getOldmessages() {
 		return this.oldmessages;
 	}
+
+	public User getSelecetedUser() {
+		return selecetedUser;
+	}
+
+	public void setSelecetedUser(User selecetedUser) {
+		this.selecetedUser = selecetedUser;
+	}
+	
+	
 }

@@ -4,8 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.chat_java_tp_client.VideoCallWindow.VideoCallWindow;
-import com.chat_java_tp_client.helpers.AppState;
-import com.chat_java_tp_client.helpers.SocketManagerCallVideo;
+import com.chat_java_tp_client.helpers.AppState; 
 import com.chat_java_tp_client.sound.Sound;
 
 import javafx.scene.image.Image;
@@ -19,7 +18,6 @@ import javafx.scene.image.ImageView;
 public class VideoCallController implements Initializable {
 
 	private Sound soundApp;
-	private SocketManagerCallVideo SocketManagerCallVideo;
 	private AppState appState;
 	private VideoCallWindow mainVideoCallWindow;
 
@@ -50,7 +48,7 @@ public class VideoCallController implements Initializable {
 	public void setMainCallApp(VideoCallWindow VideoCallWindow) {
 		this.mainVideoCallWindow = VideoCallWindow;
 		this.appState = VideoCallWindow.getAppState();
-		this.SocketManagerCallVideo = VideoCallWindow.getSocketManagerCallVideo();
+//		this.SocketManagerCallVideo = VideoCallWindow.getSocketManagerCallVideo();
 		this.soundApp = VideoCallWindow.getSoundApp();
 	}
 

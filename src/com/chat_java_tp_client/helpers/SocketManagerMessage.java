@@ -36,7 +36,7 @@ public class SocketManagerMessage {
 
 	public SocketManagerMessage() {
 		config_env = new ConfigEnv();
-		SERVER_IP = config_env.get("SERVER_IP_MESSAGE");
+		SERVER_IP = config_env.get("SERVER_IP_MESSAGE"); 
 		PORT = Integer.parseInt(config_env.get("PORT_MESSAGE"));
 	}
 

@@ -4,8 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.chat_java_tp_client.AudioCallWindow.AudioCallWindow;
-import com.chat_java_tp_client.helpers.AppState;
-import com.chat_java_tp_client.helpers.SocketManagerCall;
+import com.chat_java_tp_client.helpers.AppState; 
 import com.chat_java_tp_client.sound.Sound;
 
 import javafx.application.Platform;
@@ -17,7 +16,6 @@ import javafx.scene.control.Button;
 public class AudioCallController implements Initializable {
 
 	private Sound soundApp;
-	private SocketManagerCall socketManagerCall;
 	private AppState appState;
 	private AudioCallWindow mainAudioCallWindow;
 
@@ -44,7 +42,6 @@ public class AudioCallController implements Initializable {
 	public void setMainCallApp(AudioCallWindow audioCallWindow) {
 		this.mainAudioCallWindow = audioCallWindow;
 		this.appState = audioCallWindow.getAppState();
-		this.socketManagerCall = audioCallWindow.getSocketManagerCall();
 		this.soundApp = audioCallWindow.getSoundApp();
 	}
 

@@ -1,5 +1,6 @@
 package com.chat_java_tp_client;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.json.JSONArray;
@@ -34,6 +35,10 @@ public class ChatApp extends Application {
 	private ChatController chatController;
 
 	public static void main(String[] args) {
+		String relativePath = "src/libs/javaOpencv/x64/opencv_java4100.dll";
+        String absolutePath = new File(relativePath).getAbsolutePath();
+        System.out.println(absolutePath);
+        System.load(absolutePath);
 		Application.launch(args);
 	}
 
@@ -52,7 +57,7 @@ public class ChatApp extends Application {
 		Scene scene = new Scene(root, 1024, 700);
 		win.setScene(scene);
 		win.setTitle("Application Chat");
-		win.setResizable(false); 
+		win.setResizable(false);
 		win.show();
 	}
 
@@ -98,6 +103,7 @@ public class ChatApp extends Application {
 				while ((response = socketManagerMessage.getInputStream().readLine()) != null) {
 					JSONObject jsonObject = new JSONObject(response);
 					if (currentPage.equals("login")) {
+						System.out.println(jsonObject);
 						loginController.listentServerIn(jsonObject);
 					} else {
 						chatController.listentServerIn(jsonObject);

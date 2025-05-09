@@ -56,8 +56,7 @@ public class LoginController implements Initializable {
 
 	private void actionLogin() {
 		String username = usernameField.getText().trim();
-		String password = passwordField.getText().trim(); // Récupération du mot de passe
-		System.out.println("passwordpassword" + password);
+		String password = passwordField.getText().trim();
 		if (username.isEmpty()) {
 			Helpers.showMessage("Erreur", "Le nom d'utilisateur ne peut pas être vide.", null);
 			return;
@@ -86,8 +85,7 @@ public class LoginController implements Initializable {
 
 			if (success) {
 				JSONArray messages = mess.getJSONArray("messages");
-				JSONArray userArr = mess.getJSONArray("user");
-				User currentUser = new User(userArr.getJSONObject(0));
+				User currentUser = new User(mess.getJSONObject("user"));
 				JSONArray allUsers = mess.getJSONArray("all_users");
 
 				Platform.runLater(() -> {
@@ -114,7 +112,7 @@ public class LoginController implements Initializable {
 	}
 
 	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) { 
+	public void initialize(URL arg0, ResourceBundle arg1) {
 	}
 
 	public void setMainApp(ChatApp chatApp) {

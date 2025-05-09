@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="borderPane" maxHeight="620.0" maxWidth="1040.0" prefHeight="620.0" prefWidth="1040.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.LoginController">
    <center> 
@@ -29,10 +30,13 @@
                               <Insets top="20.0" />
                            </VBox.margin>
                         </ImageView>
-                        <Label id="welcom" alignment="CENTER" prefHeight="128.0" prefWidth="614.0" text="Welcom on Chat" textFill="#117cff">
+                        <Label id="welcom" alignment="CENTER" prefHeight="128.0" prefWidth="614.0" style="-fx-background-color: #031c30; -fx-border-radius: 10; -fx-opacity: 0.9;" text="ALANYA" textFill="WHITE">
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
                         </Label>
                      </children>
                   </VBox>
