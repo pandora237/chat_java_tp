@@ -32,13 +32,12 @@ public class ReceiveCallVideo {
 	public ReceiveCallVideo() {
 	}
 
-	public void start(String ip_video, int port_video, VideoCallController callController) {
+	public void start(String ip_video, int port_video) {
 		try {
 
 			socketReceive = new Socket(ip_video, port_video);
 			in = new BufferedInputStream(socketReceive.getInputStream());
-			out = new PrintWriter(new BufferedOutputStream(socketReceive.getOutputStream()), true);
-			this.callController = callController;
+			out = new PrintWriter(new BufferedOutputStream(socketReceive.getOutputStream()), true); 
 			receiveThread = new Thread(() -> {
 				handleReceiveData();
 			});
@@ -65,6 +64,14 @@ public class ReceiveCallVideo {
 		} finally {
 
 		}
+	}
+
+	public VideoCallController getCallController() {
+		return callController;
+	}
+
+	public void setCallController(VideoCallController callController) {
+		this.callController = callController;
 	}
 
 	protected void hanlerPlayVidioBuffer(StringBuilder buffer) {

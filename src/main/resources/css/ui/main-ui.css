@@ -28,7 +28,7 @@
 .VBoxRight {
 	-fx-background-color: #459bbe;
 	-fx-padding: 5;
-	-fx-background-radius: 10 10 10 0 ;
+	-fx-background-radius: 10 10 10 0;
 }
 
 .nameLabel {
@@ -40,11 +40,12 @@
 
 .contentLabel {
 	-fx-background-color: white;
+	/* -fx-font-weight: bold; */
 	-fx-text-fill: black;
-	-fx-padding: 15;
+	-fx-padding: 10;
 	-fx-background-radius: 10;
 	-fx-font-size: 14;
-	-fx-min-width: 200;
+	-fx-min-width: 50;
 	-fx-max-width: 400;
 	-fx-alignment: center;
 }
@@ -64,7 +65,7 @@
 
 /*right*/
 .rightMe .VBoxRight {
-	-fx-background-color:  #031c30;
+	-fx-background-color: #031c30;
 	-fx-alignment: "TOP_RIGHT";
 	-fx-background-radius: 10 10 0 10;
 }
@@ -93,7 +94,8 @@
 
 /*user*/
 .userblok {
-	-fx-background-color: #FDBA74;
+	-fx-text-color: #ffffff;
+	-fx-background-color: #031c30;
 	-fx-padding: 10;
 	-fx-background-radius: 10;
 	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 9, 0.0, 2, 2);

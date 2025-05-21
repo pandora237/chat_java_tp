@@ -48,6 +48,7 @@ public class VideoCallWindow extends AudioCallWindow {
 			Parent callView = loader.load();
 			callControllerVideo = loader.getController();
 			callControllerVideo.setMainCallApp(this);
+			receiveCallVideo.setCallController(callControllerVideo);
 			// Ajouter la vue dans le conteneur principal
 			root = new StackPane();
 			root.getChildren().add(callView);
@@ -84,7 +85,7 @@ public class VideoCallWindow extends AudioCallWindow {
 		super.sendOrReceive(is_receive, false);
 		if (is_receive) {
 			if (ip_come != null) {
-				receiveCallVideo.start(ip_come, port_come_video, callControllerVideo);
+				receiveCallVideo.start(ip_come, port_come_video);
 				// demarrage du server d'envoie
 				serverCallVideo.startServer(callControllerVideo);
 				serverCall.startServer();

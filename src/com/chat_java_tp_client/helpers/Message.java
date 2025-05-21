@@ -73,6 +73,10 @@ public class Message {
 		return usernameSend;
 	}
 
+	public void setUsernameSend(String usernameSend) {
+		this.usernameSend = usernameSend;
+	}
+
 	@Override
 	public String toString() {
 		return "Message{" + "idMessage=" + idMessage + ", idSend=" + idSend + ", idReceive=" + idReceive + ", fileName=" + fileName + ", content='"

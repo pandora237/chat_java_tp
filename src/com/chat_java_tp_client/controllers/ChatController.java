@@ -1,20 +1,17 @@
 package com.chat_java_tp_client.controllers;
 
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
-import java.awt.ScrollPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.SocketAddress;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.ResourceBundle;
 
@@ -22,8 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.chat_java_tp_client.ChatApp;
-import com.chat_java_tp_client.ServerCall;
-import com.chat_java_tp_client.ServerCallVideo;
 import com.chat_java_tp_client.AudioCallWindow.AudioCallWindow;
 import com.chat_java_tp_client.VideoCallWindow.VideoCallWindow;
 import com.chat_java_tp_client.helpers.AppState;
@@ -34,8 +29,6 @@ import com.chat_java_tp_client.helpers.User;
 import com.chat_java_tp_client.sound.Sound;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -71,6 +64,12 @@ public class ChatController implements Initializable {
 	private Button logoutBtn;
 	@FXML
 	private Label CurrentUsername;
+	@FXML
+	private HBox footerHbox;
+	@FXML
+	private HBox HBoxCtrlSend;
+	@FXML
+	private HBox HBoxCtrlEmoji;
 
 	private ChatApp mainApp;
 	private MessageController boxMessage;
@@ -113,6 +112,7 @@ public class ChatController implements Initializable {
 				fileMessage.put("fileName", file.getName());
 				fileMessage.put("fileSize", fileBytes.length);
 				fileMessage.put("fileContent", Base64.getEncoder().encodeToString(fileBytes));
+				fileMessage.put("idSend", currentUser.getIdUser());
 				fileMessage.put("idUser", currentUser.getIdUser());
 				fileMessage.put("idReceive", selectedUser.getIdUser());
 				fileMessage.put("type", Helpers.sendFile);
@@ -142,6 +142,7 @@ public class ChatController implements Initializable {
 			signal.put("action", Helpers.audioType);
 			signal.put("content", "Repond a mon appel");
 
+			signal.put("idSend", currentUser.getIdUser());
 			signal.put("idUser", currentUser.getIdUser());
 			signal.put("idReceive", selectedUser.getIdUser());
 			signal.put("type", Helpers.audioType);
@@ -164,6 +165,7 @@ public class ChatController implements Initializable {
 			signal.put("action", type);
 			signal.put("content", "Repond a mon appel reception");
 			signal.put("idUser", currentUser.getIdUser());
+			signal.put("idSend", currentUser.getIdUser());
 			signal.put("idReceive", idReceive);
 
 			signal.put("type", type);
@@ -174,7 +176,7 @@ public class ChatController implements Initializable {
 			}
 
 			socketManagerMessage.getOutputStream().println(signal.toString());
-			System.out.println("signalRespCall : "+signal);
+			System.out.println("signalRespCall : " + signal);
 		}
 	}
 
@@ -193,6 +195,7 @@ public class ChatController implements Initializable {
 			signal.put("action", Helpers.videoType);
 			signal.put("content", "Repond a mon appel");
 
+			signal.put("idSend", currentUser.getIdUser());
 			signal.put("idUser", currentUser.getIdUser());
 			signal.put("idReceive", selectedUser.getIdUser());
 			signal.put("type", Helpers.videoType);
@@ -206,6 +209,23 @@ public class ChatController implements Initializable {
 		}
 	}
 
+	private void initEmojiBlok(boolean isVisible) {
+		HBoxCtrlEmoji.setVisible(isVisible);
+		HBoxCtrlEmoji.setManaged(isVisible);
+		HBoxCtrlSend.setVisible(!isVisible);
+		HBoxCtrlSend.setManaged(!isVisible);
+	}
+
+	@FXML
+	void closeEmoji(MouseEvent event) {
+		initEmojiBlok(false);
+	}
+
+	@FXML
+	void openEmoji(MouseEvent event) {
+		initEmojiBlok(true);
+	}
+
 	public void signalAskFile(int id) {
 		if (socketManagerMessage.getOutputStream() != null && selectedUser != null) {
 
@@ -213,6 +233,7 @@ public class ChatController implements Initializable {
 			signal.put("action", Helpers.askFile);
 			signal.put("content", "");
 
+			signal.put("idSend", currentUser.getIdUser());
 			signal.put("idUser", currentUser.getIdUser());
 			signal.put("idMessage", id);
 			signal.put("idReceive", currentUser.getIdUser());
@@ -228,6 +249,7 @@ public class ChatController implements Initializable {
 			signal.put("content", "");
 			signal.put("fileName", name);
 
+			signal.put("idSend", currentUser.getIdUser());
 			signal.put("idUser", currentUser.getIdUser());
 			signal.put("idReceive", selectedUser.getIdUser());
 			signal.put("type", Helpers.emoji);
@@ -294,12 +316,15 @@ public class ChatController implements Initializable {
 		}
 		Message mess = new Message(data);
 		boxMessage.addMessage(mess, currentUser);
+		scrollDownMessage();
+	}
+
+	private void scrollDownMessage() {
 		Platform.runLater(() -> {
 			if (contentMessageListView != null) {
 				contentMessageListView.scrollTo(contentMessageListView.getItems().size() - 1);
 			}
 		});
-
 	}
 
 	public void handleEndCall() {
@@ -422,10 +447,6 @@ public class ChatController implements Initializable {
 				initBtnCallDisabled();
 			});
 
-//			JSONObject mess = jsonObject.getJSONObject("d    
-//			addContentMessageListview(mess); 
-//									messageArea.appendText("Serveur: " + mess.getString("content") + "\n");
-
 		} else if (Helpers.videoTypeReceiver.equals(action)) {
 			if (videoCallWindow == null) {
 				return;
@@ -439,10 +460,9 @@ public class ChatController implements Initializable {
 			videoCallWindow.setIp_come(ip);
 			videoCallWindow.setPort_come(port);
 			videoCallWindow.setPort_come_video(port_video);
-			System.out.println("reception: " + jsonObject);
 			// reception
-			videoCallWindow.getReceiveCall().start(ip, port);
-			videoCallWindow.getReceiveCallVideo().start(ip, port_video, videoCallWindow.getCallControllerVideo());
+//			videoCallWindow.getReceiveCall().start(ip, port);
+			videoCallWindow.getReceiveCallVideo().start(ip, port_video);
 
 		} else if (Helpers.otherUserLogged.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");
@@ -569,14 +589,14 @@ public class ChatController implements Initializable {
 			noSelectUser();
 			try {
 				File dir = new File(Helpers.imageDirectoryPathEmoji);
-				System.out.println("imageDirectoryPath : " + Helpers.imageDirectoryPathEmoji + " -> " + dir);
+//				System.out.println("imageDirectoryPath : " + Helpers.imageDirectoryPathEmoji + " -> " + dir);
 
 				if (dir.exists() && dir.isDirectory()) {
 					File[] imageFiles = dir.listFiles(
 							(d, name) -> name.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)") && !name.contains("-"));
 
 					if (imageFiles != null) {
-						int columns = 7;
+						int columns = 10;
 						int row = 0;
 						int col = 0;
 
@@ -591,9 +611,7 @@ public class ChatController implements Initializable {
 								imageView.setSmooth(true);
 
 								imageView.setOnMouseClicked(e -> {
-									System.out.println("Image cliquée : " + file.getName());
 									signalSendEmoji(file.getName());
-									// Action personnalisée ici
 								});
 
 								imageContainer.add(imageView, col, row);
@@ -631,6 +649,8 @@ public class ChatController implements Initializable {
 				contentMessageListView.getItems().clear();
 				contentMessageListView.getItems().add(l);
 				initBtnCallDisabled();
+				footerHbox.setVisible(false);
+				footerHbox.setManaged(false);
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -648,6 +668,9 @@ public class ChatController implements Initializable {
 	public void ChangeUser(User userSelected) {
 		handleEndCall();
 		updateUserBlock();
+		footerHbox.setVisible(true);
+		footerHbox.setManaged(true);
+		initEmojiBlok(false);
 		contentMessageListView.getItems().clear();
 		contentMessageListView.getItems().add(loaderMessages);
 
@@ -656,6 +679,7 @@ public class ChatController implements Initializable {
 		messageDatas.put("idReceive", userSelected.getIdUser());
 		messageDatas.put("action", Helpers.getMessUserSendReceive);
 		socketManagerMessage.getOutputStream().println(messageDatas.toString());
+		scrollDownMessage();
 	}
 
 }

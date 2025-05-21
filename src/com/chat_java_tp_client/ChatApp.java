@@ -54,7 +54,7 @@ public class ChatApp extends Application {
 		loadLoginView();
 
 		// Configurer la scène
-		Scene scene = new Scene(root, 1024, 700);
+		Scene scene = new Scene(root, 1040, 620);
 		win.setScene(scene);
 		win.setTitle("Application Chat");
 		win.setResizable(false);

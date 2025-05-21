@@ -39,7 +39,7 @@ button {
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-border-width: 1px;
-    -fx-border-color: #1A63D6;
+    -fx-border-color: #ffffff;
     -fx-min-width: 50px;
     -fx-min-height: 50px;
     -fx-max-width: 50px;
@@ -54,15 +54,26 @@ button {
     -fx-scale-y: 1.1;
 }
 
+
+/**/
+.closeBtn {
+	-fx-background-image: url('../img/close.png');
+    -fx-background-color: #ffbfbf;
+}
+/**/
+.openEmojiBtn {
+	-fx-background-image: url('../img/emoji.png');
+}
+
 .label1 {
-    -fx-text-fill: #000;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 15;
     -fx-font-weight: bold;
     -fx-alignment: center-left;
 }
 
 .label2 {
-    -fx-text-fill: #353535;
+    -fx-text-fill: #919191;
     -fx-font-size: 10;
     -fx-font-weight: bold;
     -fx-alignment: center-left;

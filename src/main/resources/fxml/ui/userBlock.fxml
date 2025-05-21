@@ -12,10 +12,10 @@
 
 <!-- add class userFBlock for girl -->
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.UserBlocController">
+<VBox onMouseClicked="#actionSelectedUser" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.UserBlocController">
     <HBox alignment="CENTER_LEFT" onMouseClicked="#actionSelectedUser" spacing="15">
-        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="49.0" styleClass="btnImg" />
-        <VBox prefHeight="41.0" prefWidth="113.0">
+        <Button mnemonicParsing="false" onMouseClicked="#actionSelectedUser" prefHeight="31.0" prefWidth="49.0" styleClass="btnImg" />
+        <VBox onMouseClicked="#actionSelectedUser" prefHeight="41.0" prefWidth="113.0">
             <Label fx:id="userName" prefHeight="21.0" prefWidth="118.0" styleClass="label1" text="USER_02" />
             <HBox>
                 <Label fx:id="name" prefHeight="21.0" prefWidth="118.0" styleClass="label2" text="Alice kamto" />

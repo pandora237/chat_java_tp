@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.chat_java_tp_client.helpers.Helpers;
 import com.chat_java_tp_client.helpers.Message;
 import com.chat_java_tp_client.helpers.User;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -30,6 +35,15 @@ public class MessageController {
 
 	// Méthode pour ajouter un message
 	public void addMessage(Message message, User currentUser) {
+		if (message.getUsernameSend() == null || message.getUsernameSend().isEmpty()) {
+			JSONArray listUser = chatController.getAppState().getAllUsers();
+			listUser.forEach(u -> {
+				JSONObject userObj = (JSONObject) u;
+				if (message.getIdSend() == userObj.optInt("idUser")) {
+					message.setUsernameSend(userObj.getString("username"));
+				}
+			});
+		}
 		try {
 			// Choisir le fichier FXML en fonction du type de message
 			FXMLLoader loader;
@@ -70,26 +84,11 @@ public class MessageController {
 				setFileMessageData(messageBlock, message, isCurrentUser);
 				break;
 			case Helpers.emoji:
-				try {
-					loader = new FXMLLoader(
-							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageEmoji.fxml"));
-					messageBlock = loader.load();
-					ImageView imageEmoji = (ImageView) messageBlock.lookup("#ImageEmoji");
+				loader = new FXMLLoader(
+						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageEmoji.fxml"));
+				messageBlock = loader.load();
+				setEmojiMessageData(messageBlock, message, isCurrentUser);
 
-					String nameImg = message.getFileName();
-					String filePath = Helpers.imageDirectoryPathEmoji + File.separator + nameImg;
-					File imageFile = new File(filePath);
-
-					if (imageFile.exists()) {
-						Image image = new Image(new FileInputStream(imageFile));
-						imageEmoji.setImage(image);
-					} else {
-						System.err.println("Fichier image non trouvé : " + filePath);
-					}
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 				break;
 
 			default:
@@ -148,6 +147,34 @@ public class MessageController {
 //		imageView.setImage(new Image("fxml/images/" + message.getFileName()));
 		timeLabel.setText(message.getDateAdd());
 		fileName.setText(message.getFileName());
+	}
+
+	// Méthode pour configurer les emojis
+	private void setEmojiMessageData(VBox messageBlock, Message message, boolean isCurrentUser) {
+
+		ImageView imageEmoji = (ImageView) messageBlock.lookup("#ImageEmoji");
+		Label senderLabel = (Label) messageBlock.lookup("#senderLabel");
+		Label timeLabel = (Label) messageBlock.lookup("#timeLabel");
+
+		senderLabel.setText(isCurrentUser ? "Vous" : message.getUsernameSend());
+		timeLabel.setText(message.getDateAdd().toString());
+
+		String nameImg = message.getFileName();
+		String filePath = Helpers.imageDirectoryPathEmoji + File.separator + nameImg;
+		File imageFile = new File(filePath);
+
+		try {
+			if (imageFile.exists()) {
+				Image image;
+				image = new Image(new FileInputStream(imageFile));
+
+				imageEmoji.setImage(image);
+			} else {
+				System.err.println("Fichier image non trouvé : " + filePath);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void removeAllChild() {
