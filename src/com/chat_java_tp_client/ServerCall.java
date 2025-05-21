@@ -73,7 +73,8 @@ public class ServerCall {
 	}
 
 	private void handleClient(Socket clientSocket) throws IOException {
-		System.out.println("Client audio connecté : " + clientSocket.getInetAddress());
+		System.out.println(
+				"Client audio connecté : " + clientSocket.getInetAddress() + " " + clientSocket.getLocalPort());
 
 		TargetDataLine microphone = null;
 		OutputStream outputStream = null;

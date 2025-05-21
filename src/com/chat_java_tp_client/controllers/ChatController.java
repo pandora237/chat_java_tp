@@ -461,7 +461,7 @@ public class ChatController implements Initializable {
 			videoCallWindow.setPort_come(port);
 			videoCallWindow.setPort_come_video(port_video);
 			// reception
-//			videoCallWindow.getReceiveCall().start(ip, port);
+			videoCallWindow.getReceiveCall().start(ip, port);
 			videoCallWindow.getReceiveCallVideo().start(ip, port_video);
 
 		} else if (Helpers.otherUserLogged.equals(action)) {

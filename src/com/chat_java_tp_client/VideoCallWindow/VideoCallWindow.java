@@ -23,8 +23,6 @@ public class VideoCallWindow extends AudioCallWindow {
 
 	protected int port_come_video;
 	protected int id_caller_video;
-	protected ServerCall serverCall = new ServerCall();
-	protected ReceiveCall receiveCall = new ReceiveCall();
 
 	protected ServerCallVideo serverCallVideo = new ServerCallVideo();
 	protected ReceiveCallVideo receiveCallVideo = new ReceiveCallVideo();
@@ -82,13 +80,12 @@ public class VideoCallWindow extends AudioCallWindow {
 
 	@Override
 	public void sendOrReceive(boolean is_receive, boolean send_signal_audio) {
-		super.sendOrReceive(is_receive, false);
+		super.sendOrReceive(is_receive, send_signal_audio);
 		if (is_receive) {
 			if (ip_come != null) {
 				receiveCallVideo.start(ip_come, port_come_video);
 				// demarrage du server d'envoie
 				serverCallVideo.startServer(callControllerVideo);
-				serverCall.startServer();
 				chatController.signalRespCall(Helpers.videoTypeReceiver, Helpers.getLocalIpAddress(),
 						serverCall.getServerSocket_audio().getLocalPort(), id_caller,
 						serverCallVideo.getServerSocket_video().getLocalPort());
