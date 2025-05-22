@@ -99,7 +99,7 @@ public class VideoCallWindow extends AudioCallWindow {
 	public void answerCall() {
 		soundApp.stopSound();
 		callControllerVideo.updateButtonState(true);
-		sendOrReceive(true, false); 
+		sendOrReceive(true, false);
 	}
 
 	@Override

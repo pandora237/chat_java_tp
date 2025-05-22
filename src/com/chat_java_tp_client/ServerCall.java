@@ -96,8 +96,7 @@ public class ServerCall {
 			System.out.println(" Envoi du son en cours...");
 
 			while (running_audio.get() && clientSocket.isConnected()) {
-				int bytesRead = microphone.read(buffer, 0, buffer.length);
-				System.out.println(bytesRead);
+				int bytesRead = microphone.read(buffer, 0, buffer.length); 
 				if (bytesRead > 0) {
 					String message = Helpers.encodedData(buffer, true);
 					out_send.println(message);

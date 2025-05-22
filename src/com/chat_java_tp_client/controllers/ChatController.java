@@ -134,7 +134,7 @@ public class ChatController implements Initializable {
 			audioCallWindow = new AudioCallWindow(this);
 			audioCallWindow.startCallWindow(false);
 			Platform.runLater(() -> {
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 			ServerSocket serverSocketCall = audioCallWindow.getServerCall().getServerSocket_audio();
 
@@ -172,7 +172,7 @@ public class ChatController implements Initializable {
 			signal.put("ip", socketAddress);
 			signal.put("port", port);
 			if (portVideo != 0) {
-				signal.put("port_video", port);
+				signal.put("port_video", portVideo);
 			}
 
 			socketManagerMessage.getOutputStream().println(signal.toString());
@@ -186,7 +186,7 @@ public class ChatController implements Initializable {
 			videoCallWindow = new VideoCallWindow(this);
 			videoCallWindow.startCallWindow(false);
 			Platform.runLater(() -> {
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 			ServerSocket serverAudioSocketCall = videoCallWindow.getServerCall().getServerSocket_audio();
 			ServerSocket serverVideoSocketCall = videoCallWindow.getServerCallVideo().getServerSocket_video();
@@ -333,8 +333,8 @@ public class ChatController implements Initializable {
 		callBtnAudio.setDisable(false);
 	}
 
-	public void initBtnCallDisabled() {
-		isCall = true;
+	public void initBtnCallDisabled(boolean isCall) {
+		isCall = isCall;
 		callBtnVideo.setDisable(true);
 		callBtnAudio.setDisable(true);
 	}
@@ -360,11 +360,7 @@ public class ChatController implements Initializable {
 	}
 
 	public void listentServerIn(JSONObject jsonObject) {
-		String action = jsonObject.getString("action");
-		if ("get_messages".equals(action)) {
-
-		}
-
+		String action = jsonObject.getString("action"); 
 		if (Helpers.askFile.equals(action)) {
 			JSONObject fileData = jsonObject.getJSONObject("datas");
 			String fileName = fileData.getString("fileName");
@@ -398,7 +394,8 @@ public class ChatController implements Initializable {
 		} else if (Helpers.emoji.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");
 			addContentMessageListview(mess);
-		} else if (Helpers.audioType.equals(action)) {
+			soundApp.playSound(Sound.NOTIFICATION, false);
+		} else if (Helpers.audioType.equals(action)) { 
 			if (isCall) {
 				return;
 			}
@@ -411,7 +408,7 @@ public class ChatController implements Initializable {
 			audioCallWindow.setId_caller(id_caller);
 			Platform.runLater(() -> {
 				audioCallWindow.startCallWindow(true);
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 
 		} else if (Helpers.audioTypeReceiver.equals(action)) {
@@ -419,13 +416,12 @@ public class ChatController implements Initializable {
 				return;
 			}
 			Platform.runLater(() -> {
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 			String ip = jsonObject.getString("ip");
 			int port = jsonObject.getInt("port");
 			audioCallWindow.setIp_come(ip);
 			audioCallWindow.setPort_come(port);
-			System.out.println("reception: " + jsonObject);
 			// reception
 			audioCallWindow.getReceiveCall().start(ip, port);
 
@@ -444,7 +440,7 @@ public class ChatController implements Initializable {
 			videoCallWindow.setId_caller(id_caller);
 			Platform.runLater(() -> {
 				videoCallWindow.startCallWindow(true);
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 
 		} else if (Helpers.videoTypeReceiver.equals(action)) {
@@ -452,7 +448,7 @@ public class ChatController implements Initializable {
 				return;
 			}
 			Platform.runLater(() -> {
-				initBtnCallDisabled();
+				initBtnCallDisabled(true);
 			});
 			String ip = jsonObject.getString("ip");
 			int port = jsonObject.getInt("port");
@@ -505,7 +501,6 @@ public class ChatController implements Initializable {
 		} else {
 			soundApp.playSound(Sound.NOTIFICATION, false);
 			JSONObject mess = jsonObject.getJSONObject("datas");
-//			System.out.println(mess);
 			addContentMessageListview(mess);
 		}
 
@@ -639,7 +634,7 @@ public class ChatController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
+ 
 	private void noSelectUser() {
 		try {
 			FXMLLoader noSelectU = new FXMLLoader(
@@ -648,7 +643,7 @@ public class ChatController implements Initializable {
 			Platform.runLater(() -> {
 				contentMessageListView.getItems().clear();
 				contentMessageListView.getItems().add(l);
-				initBtnCallDisabled();
+				initBtnCallDisabled(false);
 				footerHbox.setVisible(false);
 				footerHbox.setManaged(false);
 			});

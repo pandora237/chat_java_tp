@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -14,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPane" maxHeight="620.0" maxWidth="1040.0" prefHeight="620.0" prefWidth="1040.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.LoginController">
+<BorderPane maxHeight="620.0" maxWidth="1040.0" prefHeight="620.0" prefWidth="1040.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chat_java_tp_client.controllers.RegisterController">
    <center> 
       <Pane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="633.0" prefWidth="1040.0" stylesheets="@../css/login.css">
          <children>
@@ -40,21 +41,45 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox id="containForm" alignment="CENTER" maxHeight="450.0" minHeight="200.0" minWidth="-Infinity">
+                  <VBox id="containForm" alignment="CENTER" maxHeight="550.0" minHeight="200.0" minWidth="-Infinity" prefHeight="525.0" prefWidth="322.0">
                      <children>
                         <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="356.0" prefWidth="300.0">
                            <children>
                               <VBox>
                                  <children>
-                                    <Label styleClass="title" text="Connexion">
+                                    <Label styleClass="title" text="Inscription">
                                        <VBox.margin>
                                           <Insets bottom="30.0" top="10.0" />
                                        </VBox.margin>
                                     </Label>
                                     <VBox minHeight="-Infinity" spacing="10.0">
                                        <children>
+                                          <Label text="FirstName" />
+                                          <TextField id="usernameField" fx:id="firstnameField" minHeight="30.0" minWidth="200.0" onKeyReleased="#actionKeyReleased" />
+                                       </children>
+                                    </VBox>
+                                    <VBox minHeight="-Infinity" spacing="10.0">
+                                       <children>
+                                          <Label text="LastName" />
+                                          <TextField id="usernameField" fx:id="lastnameField" minHeight="30.0" minWidth="200.0" onKeyReleased="#actionKeyReleased" />
+                                       </children>
+                                    </VBox>
+                                    <VBox minHeight="-Infinity" spacing="10.0">
+                                       <children>
                                           <Label text="UserName" />
                                           <TextField id="usernameField" fx:id="usernameField" minHeight="30.0" minWidth="200.0" onKeyReleased="#actionKeyReleased" />
+                                       </children>
+                                    </VBox>
+                                    <VBox minHeight="-Infinity" spacing="10.0">
+                                       <children>
+                                          <Label text="Phone" />
+                                          <TextField id="usernameField" fx:id="phoneField" minHeight="30.0" minWidth="200.0" onKeyReleased="#actionKeyReleased" />
+                                       </children>
+                                    </VBox>
+                                    <VBox minHeight="-Infinity" spacing="10.0">
+                                       <children>
+                                          <Label text="Sexe" />
+                                          <ChoiceBox fx:id="sexeField" prefHeight="26.0" prefWidth="302.0" />
                                        </children>
                                     </VBox>
                                     <VBox spacing="10.0">
@@ -66,29 +91,27 @@
                                           <Insets top="15.0" />
                                        </VBox.margin>
                                     </VBox>
-                                    <VBox alignment="CENTER" minHeight="-Infinity" spacing="10.0" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="20.0" />
                                  </VBox.margin>
                               </VBox>
-                              <HBox alignment="CENTER" prefHeight="36.0" prefWidth="102.0">
+                              <HBox alignment="CENTER" prefHeight="36.0" prefWidth="102.0" spacing="20.0">
                                  <children>
-                                    <VBox alignment="CENTER" prefHeight="74.0" prefWidth="321.0" spacing="5.0">
-                                       <children>
-                                          <Button id="submitBtn" fx:id="submitBtn" alignment="CENTER" minHeight="-Infinity" minWidth="150.0" mnemonicParsing="false" onAction="#handleLoginChat" prefHeight="38.0" prefWidth="328.0" text="Se Connecter" textFill="WHITE">
-                                             <padding>
-                                                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-                                             </padding>
-                                          </Button>
-                                          <Label text="ou" />
-                                          <Label onMouseClicked="#handleRegisterChat" prefHeight="18.0" prefWidth="53.0" text="S'inscrire" textAlignment="RIGHT" textFill="#338bdc">
-                                             <font>
-                                                <Font name="System Bold" size="12.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </VBox>
+                                    <Button id="submitBtn" fx:id="submitBtn" alignment="CENTER" minHeight="-Infinity" minWidth="150.0" mnemonicParsing="false" onAction="#handleRegisterChat" prefHeight="38.0" prefWidth="158.0" text="s'inscrire" textFill="WHITE">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                       <padding>
+                                          <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                                       </padding>
+                                    </Button>
+                                    <Label text="ou" />
+                                    <Label fx:id="connexionBtn" onMouseClicked="#handleLoginChat" prefHeight="18.0" prefWidth="87.0" text="Se Connecter" textAlignment="RIGHT" textFill="#338bdc">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
                                  </children>
                               </HBox>
                            </children>

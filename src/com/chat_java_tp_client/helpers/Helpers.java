@@ -47,14 +47,16 @@ public class Helpers {
 	public static final String login = "login";
 	public static final String logout = "logout";
 	public static final String otherUserLogged = "other_user_logged";
+	public static final String register = "register";
+	public static final String otherUserRegister = "other_user_register";
 	public static final String deliveredPortCall = "deliveredPortCall";
 
 	public static final String responseSendMessage = "response_send_message";
 	public static final String getMessUserSendReceive = "get_mess_user_send_receive";
 
+	public static final String FILE_DOWNLOAD = "downloads/";
 	// end commun
 
-	public static final String FILE_DOWNLOAD = "downloads/";
 	public static final String imageDirectoryPathEmoji = "src/" + Helpers.getResourcesPath() + "emoji";
 
 	public static final String[] SeparatorVideo = { "START_VIDEO", "END_VIDEO " };

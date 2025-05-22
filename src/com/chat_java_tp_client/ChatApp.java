@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import com.chat_java_tp_client.controllers.ChatController;
 import com.chat_java_tp_client.controllers.LoginController;
+import com.chat_java_tp_client.controllers.RegisterController;
 import com.chat_java_tp_client.helpers.AppState;
 import com.chat_java_tp_client.helpers.Helpers;
 import com.chat_java_tp_client.helpers.SocketManagerMessage;
@@ -31,14 +32,15 @@ public class ChatApp extends Application {
 	private StackPane root;
 	private AppState appState = new AppState();
 	private String currentPage = "login";
+	private RegisterController registerController;
 	private LoginController loginController;
 	private ChatController chatController;
 
 	public static void main(String[] args) {
 		String relativePath = "src/libs/javaOpencv/x64/opencv_java4100.dll";
-        String absolutePath = new File(relativePath).getAbsolutePath();
-        System.out.println(absolutePath);
-        System.load(absolutePath);
+		String absolutePath = new File(relativePath).getAbsolutePath();
+		System.out.println(absolutePath);
+		System.load(absolutePath);
 		Application.launch(args);
 	}
 
@@ -72,6 +74,19 @@ public class ChatApp extends Application {
 		currentPage = "login";
 	}
 
+	public void loadRegisterView() throws Exception {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(Helpers.getResourcesPath() + "fxml/register.fxml"));
+		System.out.println("Loading FXML from: " + Helpers.getResourcesPath() + "fxml/register.fxml");
+		System.out.println("Full path resolved to: " + getClass().getResource(Helpers.getResourcesPath() + "fxml/login.fxml"));
+		Parent registerView = loader.load();
+		registerController = loader.getController(); 
+		registerController.setMainApp(this);
+
+		root.getChildren().clear();
+		root.getChildren().add(registerView);
+		currentPage = "register";
+	}
+
 	public void loadChatView() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(Helpers.getResourcesPath() + "fxml/app.fxml"));
 		Parent chatView = loader.load();
@@ -103,8 +118,9 @@ public class ChatApp extends Application {
 				while ((response = socketManagerMessage.getInputStream().readLine()) != null) {
 					JSONObject jsonObject = new JSONObject(response);
 					if (currentPage.equals("login")) {
-						System.out.println(jsonObject);
 						loginController.listentServerIn(jsonObject);
+					} else if (currentPage.equals("register")) {
+						registerController.listentServerIn(jsonObject);
 					} else {
 						chatController.listentServerIn(jsonObject);
 					}

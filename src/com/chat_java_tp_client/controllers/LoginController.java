@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 public class LoginController implements Initializable {
 
@@ -54,6 +55,17 @@ public class LoginController implements Initializable {
 		actionLogin();
 	}
 
+	@FXML
+	void handleRegisterChat(MouseEvent event) {
+		Platform.runLater(() -> {
+			try {
+				mainApp.loadRegisterView();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+  
 	private void actionLogin() {
 		String username = usernameField.getText().trim();
 		String password = passwordField.getText().trim();

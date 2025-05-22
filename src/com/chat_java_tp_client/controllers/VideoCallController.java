@@ -128,7 +128,6 @@ public class VideoCallController implements Initializable {
 				localViewVideo.setImage(img);
 			}
 		});
-
 	}
 
 }
