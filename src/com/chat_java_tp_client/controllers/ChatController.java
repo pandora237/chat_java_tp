@@ -394,7 +394,7 @@ public class ChatController implements Initializable {
 		} else if (Helpers.emoji.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");
 			if (appState.getSelecetedUser() != null
-					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idReceive")) {
+					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idSend")) {
 				addContentMessageListview(mess);
 			}
 			soundApp.playSound(Sound.NOTIFICATION, false);
@@ -503,9 +503,9 @@ public class ChatController implements Initializable {
 			}
 		} else {
 			soundApp.playSound(Sound.NOTIFICATION, false);
-			JSONObject mess = jsonObject.getJSONObject("datas");
+			JSONObject mess = jsonObject.getJSONObject("datas"); 
 			if (appState.getSelecetedUser() != null
-					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idReceive")) {
+					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idSend")) {
 				addContentMessageListview(mess);
 			}
 		}
