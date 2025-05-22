@@ -360,7 +360,7 @@ public class ChatController implements Initializable {
 	}
 
 	public void listentServerIn(JSONObject jsonObject) {
-		String action = jsonObject.getString("action"); 
+		String action = jsonObject.getString("action");
 		if (Helpers.askFile.equals(action)) {
 			JSONObject fileData = jsonObject.getJSONObject("datas");
 			String fileName = fileData.getString("fileName");
@@ -393,9 +393,12 @@ public class ChatController implements Initializable {
 			addContentMessageListview(mess);
 		} else if (Helpers.emoji.equals(action)) {
 			JSONObject mess = jsonObject.getJSONObject("datas");
-			addContentMessageListview(mess);
+			if (appState.getSelecetedUser() != null
+					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idReceive")) {
+				addContentMessageListview(mess);
+			}
 			soundApp.playSound(Sound.NOTIFICATION, false);
-		} else if (Helpers.audioType.equals(action)) { 
+		} else if (Helpers.audioType.equals(action)) {
 			if (isCall) {
 				return;
 			}
@@ -501,7 +504,10 @@ public class ChatController implements Initializable {
 		} else {
 			soundApp.playSound(Sound.NOTIFICATION, false);
 			JSONObject mess = jsonObject.getJSONObject("datas");
-			addContentMessageListview(mess);
+			if (appState.getSelecetedUser() != null
+					&& appState.getSelecetedUser().getIdUser() == mess.getInt("idReceive")) {
+				addContentMessageListview(mess);
+			}
 		}
 
 	}
@@ -634,7 +640,7 @@ public class ChatController implements Initializable {
 			e.printStackTrace();
 		}
 	}
- 
+
 	private void noSelectUser() {
 		try {
 			FXMLLoader noSelectU = new FXMLLoader(
