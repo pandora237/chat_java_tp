@@ -14,6 +14,7 @@ import com.chat_java_tp_client.helpers.User;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -44,66 +45,69 @@ public class MessageController {
 				}
 			});
 		}
-		try {
-			// Choisir le fichier FXML en fonction du type de message
-			FXMLLoader loader;
-			VBox messageBlock = null;
-			boolean isCurrentUser = false;
-			if (currentUser.getIdUser() == message.getIdSend()) {
-				isCurrentUser = true;
+		Platform.runLater(() -> {
+			try {
+				// Choisir le fichier FXML en fonction du type de message
+				FXMLLoader loader;
+				VBox messageBlock = null;
+				boolean isCurrentUser = false;
+				if (currentUser.getIdUser() == message.getIdSend()) {
+					isCurrentUser = true;
+				}
+				switch (message.getType()) {
+				case "simple":
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageSimple.fxml"));
+					messageBlock = loader.load();
+					setSimpleMessageData(messageBlock, message, isCurrentUser);
+					break;
+
+				case Helpers.audioType:
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageCall.fxml"));
+					messageBlock = loader.load();
+					setCallData(messageBlock, message, "Appel audio", isCurrentUser, false);
+					break;
+
+				case Helpers.videoType:
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageCall.fxml"));
+					messageBlock = loader.load();
+					setCallData(messageBlock, message, "Appel vidéo", isCurrentUser, true);
+					break;
+
+				case Helpers.sendFile:
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageFileSend.fxml"));
+					messageBlock = loader.load();
+					MessageFileSendController controller = loader.getController();
+					controller.setChatController(chatController);
+					controller.setMessage(message);
+					setFileMessageData(messageBlock, message, isCurrentUser);
+					break;
+				case Helpers.emoji:
+					loader = new FXMLLoader(
+							getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageEmoji.fxml"));
+					messageBlock = loader.load();
+					setEmojiMessageData(messageBlock, message, isCurrentUser);
+
+					break;
+
+				default:
+					throw new IllegalArgumentException("Type de message inconnu : " + message.getType());
+				}
+
+				if (currentUser.getIdUser() == message.getIdSend()) {
+					// Ajouter le bloc configuré au conteneur principal
+					messageBlock.getStyleClass().add("rightMe");
+				}
+
+				messageContainer.getItems().add(messageBlock);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			switch (message.getType()) {
-			case "simple":
-				loader = new FXMLLoader(
-						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageSimple.fxml"));
-				messageBlock = loader.load();
-				setSimpleMessageData(messageBlock, message, isCurrentUser);
-				break;
+		});
 
-			case Helpers.audioType:
-				loader = new FXMLLoader(
-						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageCall.fxml"));
-				messageBlock = loader.load();
-				setCallData(messageBlock, message, "Appel audio", isCurrentUser, false);
-				break;
-
-			case Helpers.videoType:
-				loader = new FXMLLoader(
-						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageCall.fxml"));
-				messageBlock = loader.load();
-				setCallData(messageBlock, message, "Appel vidéo", isCurrentUser, true);
-				break;
-
-			case Helpers.sendFile:
-				loader = new FXMLLoader(
-						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageFileSend.fxml"));
-				messageBlock = loader.load();
-				MessageFileSendController controller = loader.getController();
-				controller.setChatController(chatController);
-				controller.setMessage(message);
-				setFileMessageData(messageBlock, message, isCurrentUser);
-				break;
-			case Helpers.emoji:
-				loader = new FXMLLoader(
-						getClass().getResource(Helpers.getResourcesPath() + "fxml/ui/MessageEmoji.fxml"));
-				messageBlock = loader.load();
-				setEmojiMessageData(messageBlock, message, isCurrentUser);
-
-				break;
-
-			default:
-				throw new IllegalArgumentException("Type de message inconnu : " + message.getType());
-			}
-
-			if (currentUser.getIdUser() == message.getIdSend()) {
-				// Ajouter le bloc configuré au conteneur principal
-				messageBlock.getStyleClass().add("rightMe");
-			}
-			messageContainer.getItems().add(messageBlock);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	// Méthode pour configurer les données d'un message simple
